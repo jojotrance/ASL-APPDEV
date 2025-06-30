@@ -24,11 +24,18 @@ app.use('/api/v1/users', userRoutes);
 // ...existing code...
 const PORT = process.env.PORT || 5000;
 
+console.log('Attempting to connect to MongoDB...');
+
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
 .then(() => {
+  console.log('✅ Connected to MongoDB');
+  console.log('Database:', mongoose.connection.db.databaseName);
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 })
-.catch((err) => console.error('MongoDB connection error:', err));
+.catch((err) => {
+  console.error('❌ MongoDB connection error:', err.message);
+  console.error('Full error:', err);
+});
