@@ -1,15 +1,21 @@
 import express from 'express';
+import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import cors from 'cors';
-import dotenv from 'dotenv';
+import cloudinary from 'cloudinary';
+
+dotenv.config();
+cloudinary.v2.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 import authRoutes from './routes/auth.js';
 import signRoutes from './routes/signs.js';
 import translateRoutes from './routes/translate.js';
 import userRoutes from './routes/users.js';
 
-// ...existing code...
-dotenv.config();
 
 const app = express();
 app.use(cors());
@@ -21,7 +27,6 @@ app.use('/api/v1/signs', signRoutes);
 app.use('/api/v1/translate', translateRoutes);
 app.use('/api/v1/users', userRoutes);
 
-// ...existing code...
 const PORT = process.env.PORT || 5000;
 
 console.log('Attempting to connect to MongoDB...');

@@ -10,10 +10,14 @@ function Login() {
     e.preventDefault();
     try {
       const res = await axios.post('/api/v1/auth/login', { email, password });
-      localStorage.setItem('token', res.data.token);
-      window.location = '/';
+      if (res.data.token) {
+        localStorage.setItem('token', res.data.token);
+        window.location = '/';
+      } else {
+        setError(res.data.message || 'Login failed');
+      }
     } catch (err) {
-      setError(err.response?.data?.error || 'Login failed');
+      setError(err.response?.data?.message || 'Login failed');
     }
   };
 
@@ -21,8 +25,20 @@ function Login() {
     <div className="auth-container">
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
-        <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
-        <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          required
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          required
+        />
         <button type="submit">Login</button>
         {error && <p className="error">{error}</p>}
       </form>
