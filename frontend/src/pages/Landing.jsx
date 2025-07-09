@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import LandingHeader from '../components/LandingHeader';
 import { useScrollReveal } from '../hooks/useScrollReveal';
-
+import heroIllustration from '../assets/hero-illustration.png';
+import logo from '../assets/logo.png';
 
 function Landing() {
   const [currentFeature, setCurrentFeature] = useState(0);
@@ -10,37 +11,37 @@ function Landing() {
     {
       icon: "🧠",
       title: "AI-Powered Recognition",
-      description: "Advanced machine learning trained on medical ASL vocabulary with 99.5% accuracy"
+      description: "Advanced machine learning trained on medical ASL vocabulary."
     },
     {
-      icon: "⚡",
-      title: "Real-Time Translation",
-      description: "Instant sign language to text conversion with minimal latency for seamless communication"
-    },
+     icon: "🎤",
+      title: "Speech Recognition",
+      description: "Advanced voice recognition technology that accurately captures phrases and words spoken."
+ },
     {
-      icon: "🛡️",
-      title: "HIPAA Compliant",
-      description: "Full healthcare privacy compliance ensuring patient data security and protection"
-    },
+       icon: '🤟',
+      title: 'Sign Language Output',
+      description: 'Conversion to sign language with proper grammar structure, and visual representation for deaf patients.'
+   },
     {
-      icon: "🏥",
-      title: "Medical Specialized",
-      description: "Trained with certified medical interpreters for accurate healthcare terminology"
-    }
+      icon: '🔄',
+      title: 'Two-way Communication',
+      description: 'Bidirectional translation supporting both speech-to-sign and sign-to-speech communication for complete healthcare conversations.'
+   }
   ];
 
   const services = [
-    { icon: "🏥", title: "Hospital Integration", desc: "Seamless EHR integration" },
-    { icon: "🚑", title: "Emergency Services", desc: "Critical communication support" },
-    { icon: "👩‍⚕️", title: "Clinical Consultations", desc: "Enhanced patient care" },
-    { icon: "💊", title: "Pharmacy Support", desc: "Medication counseling" }
+   { icon: "📝", title: "Text-to-ASL Converter", desc: "Instant text conversion to ASL animations" },
+  { icon: "🤳", title: "ASL-to-Text Recognition", desc: "Real-time hand gesture detection and text output" },
+  { icon: "📚", title: "Interactive Tutorials", desc: "Learn basic ASL signs like greetings and numbers" },
+  { icon: "🎓", title: "Beginner-Friendly Lessons", desc: "Step-by-step sign instructions and practice" },
   ];
 
   const stats = [
-    { number: "99.5%", label: "Translation Accuracy" },
-    { number: "500+", label: "Healthcare Facilities" },
-    { number: "50K+", label: "Successful Translations" },
-    { number: "24/7", label: "Medical Support" }
+     { number: "10K+", label: "Signs Available" },
+  { number: "70K+", label: "Successful Conversions" },
+  { number: "1M+", label: "Animated Signs Viewed" },
+  { number: "24/7", label: "Live Support Availability" },
   ];
 
   // Add scroll reveal hooks for each section
@@ -57,18 +58,18 @@ function Landing() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-cyan-700">
+       <div style={{ minHeight: '100vh', background: '#f5eedc' }}>
       <LandingHeader />
       
       {/* Hero Section */}
       <section style={{ 
         position: 'relative', 
-        minHeight: '100vh', 
+        minHeight: '60vh', 
         display: 'flex', 
         alignItems: 'center', 
         justifyContent: 'center', 
         padding: '120px 24px 80px',
-        background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #0891b2 100%)'
+        background: '#f5eedc'
       }}>
         {/* Background Pattern */}
         <div style={{
@@ -81,187 +82,120 @@ function Landing() {
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
         }} />
 
-        <div style={{ position: 'relative', zIndex: 10, maxWidth: '1200px', textAlign: 'center' }}>
-          <div style={{ marginBottom: '32px' }}>
-            <span style={{
-              display: 'inline-block',
-              padding: '8px 16px',
-              background: 'rgba(255,255,255,0.1)',
-              backdropFilter: 'blur(10px)',
-              borderRadius: '25px',
-              color: '#bfdbfe',
-              fontWeight: '500',
-              fontSize: '14px',
-              marginBottom: '24px',
-              border: '1px solid rgba(255,255,255,0.2)'
+        <div style={{ 
+          position: 'relative', 
+          zIndex: 10, 
+          maxWidth: '1200px', 
+          width: '100%',
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '80px',
+          alignItems: 'center'
+        }}>
+          {/* Left Content */}
+          <div style={{ textAlign: 'left' }}>
+            <h1 style={{ 
+              fontSize: '3.5rem', 
+              fontWeight: '800', 
+              color: '#1e40af', 
+              marginBottom: '16px', 
+              lineHeight: '1.1'
             }}>
-              🏥 Trusted by 500+ Healthcare Facilities
-            </span>
-          </div>
-          
-          <h1 style={{ 
-            fontSize: '4rem', 
-            fontWeight: '800', 
-            color: 'white', 
-            marginBottom: '24px', 
-            lineHeight: '1.1',
-            textShadow: '0 4px 8px rgba(0,0,0,0.3)'
-          }}>
-            Medical-Grade
-            <br />
-            <span style={{
-              background: 'linear-gradient(45deg, #67e8f9, #bfdbfe)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
-            }}>
-              ASL Translation
-            </span>
-          </h1>
-          
-          <p style={{ 
-            fontSize: '1.25rem', 
-            color: '#bfdbfe', 
-            marginBottom: '48px', 
-            maxWidth: '800px', 
-            margin: '0 auto 48px',
-            lineHeight: '1.6',
-            textShadow: '0 2px 4px rgba(0,0,0,0.2)'
-          }}>
-            Breaking communication barriers in healthcare with AI-powered American Sign Language translation. 
-            Ensuring every patient receives the care they deserve.
-          </p>
-          
-          <div style={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            gap: '24px', 
-            justifyContent: 'center', 
-            alignItems: 'center',
-            marginBottom: '64px'
-          }}>
-            <button style={{
-              background: 'white',
-              color: '#1e40af',
-              padding: '16px 32px',
-              borderRadius: '25px',
-              fontWeight: '700',
-              fontSize: '18px',
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              boxShadow: '0 8px 20px rgba(0,0,0,0.2)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px'
-            }}
-            onMouseOver={(e) => {
-              e.target.style.transform = 'translateY(-2px)';
-              e.target.style.boxShadow = '0 12px 30px rgba(0,0,0,0.3)';
-            }}
-            onMouseOut={(e) => {
-              e.target.style.transform = 'translateY(0)';
-              e.target.style.boxShadow = '0 8px 20px rgba(0,0,0,0.2)';
-            }}>
-              <span style={{ fontSize: '20px' }}>▶</span>
-              Start Translation Now
-            </button>
+              SignConnect
+              <br />
+              <span style={{ color: '#1e40af' }}>ASL Translation</span>
+            </h1>
             
-            <button style={{
-              background: 'rgba(255,255,255,0.1)',
-              backdropFilter: 'blur(10px)',
-              color: 'white',
-              padding: '16px 32px',
-              borderRadius: '25px',
-              fontWeight: '600',
-              fontSize: '18px',
-              border: '1px solid rgba(255,255,255,0.2)',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px'
-            }}
-            onMouseOver={(e) => {
-              e.target.style.background = 'rgba(255,255,255,0.2)';
-              e.target.style.transform = 'translateY(-2px)';
-            }}
-            onMouseOut={(e) => {
-              e.target.style.background = 'rgba(255,255,255,0.1)';
-              e.target.style.transform = 'translateY(0)';
+            <p style={{ 
+              fontSize: '1.1rem', 
+              color: '#4b5563', 
+              marginBottom: '40px', 
+              lineHeight: '1.6'
             }}>
-              <span style={{ fontSize: '18px' }}>ℹ</span>
-              Learn More
-            </button>
+              Breaking communication barriers in healthcare with AI-powered American Sign Language translation. Ensuring every patient receives the care they deserve.
+            </p>
+            
+            <div style={{ 
+              display: 'flex', 
+              flexDirection: 'column', 
+              gap: '16px', 
+              alignItems: 'flex-start'
+            }}>
+              <button style={{
+                background: '#dc2626',
+                color: 'white',
+                padding: '16px 32px',
+                borderRadius: '25px',
+                fontWeight: '700',
+                fontSize: '16px',
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 4px 12px rgba(220, 38, 38, 0.3)'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 6px 16px rgba(220, 38, 38, 0.4)';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = '0 4px 12px rgba(220, 38, 38, 0.3)';
+              }}>
+                Start Translation NOW!
+              </button>
+              
+              <button style={{
+                background: 'transparent',
+                color: '#374151',
+                padding: '16px 32px',
+                borderRadius: '25px',
+                fontWeight: '600',
+                fontSize: '16px',
+                border: '2px solid #374151',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease'
+              }}
+              onMouseOver={(e) => {
+                e.target.style.background = '#374151';
+                e.target.style.color = 'white';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.background = 'transparent';
+                e.target.style.color = '#374151';
+              }}>
+                Learn more...
+              </button>
+            </div>
           </div>
 
-          {/* Live Demo Preview */}
-          <div style={{
-            background: 'rgba(255,255,255,0.1)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '16px',
-            padding: '32px',
-            maxWidth: '900px',
-            margin: '0 auto',
-            border: '1px solid rgba(255,255,255,0.2)',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.2)'
+          {/* Right Content - Illustration */}
+          <div style={{ 
+             position: 'absolute',
+    right: -200,
+    top: 70,
+    bottom: 0,
+    width: '60%',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    pointerEvents: 'none', // so left content is still clickable
+    zIndex: 2
           }}>
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: '1fr 1fr', 
-              gap: '32px', 
-              alignItems: 'center' 
-            }}>
-              <div style={{ textAlign: 'left' }}>
-                <h3 style={{ fontSize: '20px', fontWeight: '600', color: 'white', marginBottom: '16px' }}>
-                  Live Translation Demo
-                </h3>
-                <div style={{
-                  background: 'rgba(255,255,255,0.2)',
-                  borderRadius: '12px',
-                  padding: '16px'
-                }}>
-                  <div style={{
-                    width: '100%',
-                    height: '128px',
-                    background: 'linear-gradient(135deg, #3b82f6, #0891b2)',
-                    borderRadius: '8px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '40px'
-                  }}>
-                    📹
-                  </div>
-                  <p style={{ color: '#bfdbfe', fontSize: '14px', marginTop: '8px', margin: '8px 0 0' }}>
-                    Camera feed will appear here
-                  </p>
-                </div>
-              </div>
-              <div style={{ textAlign: 'left' }}>
-                <h3 style={{ fontSize: '20px', fontWeight: '600', color: 'white', marginBottom: '16px' }}>
-                  Translation Output
-                </h3>
-                <div style={{
-                  background: 'white',
-                  borderRadius: '12px',
-                  padding: '24px'
-                }}>
-                  <p style={{ color: '#374151', fontSize: '18px', lineHeight: '1.5', margin: 0 }}>
-                    "Hello, I need to schedule an appointment with Dr. Smith for next week."
-                  </p>
-                  <div style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'space-between', 
-                    marginTop: '16px' 
-                  }}>
-                    <span style={{ color: '#059669', fontWeight: '500' }}>✓ 99.2% Confidence</span>
-                    <span style={{ color: '#6b7280', fontSize: '14px' }}>Real-time</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <img
+  src={heroIllustration}
+  alt="SignConnect Hero Illustration"
+  style={{
+    width: '10000%',
+    maxWidth: '1000px',
+    height: 'auto',
+    borderRadius: '32px',
+    boxShadow: '0 8px 32px rgba(30,64,175,0.10)',
+    objectFit: 'cover',
+    background: '#fff',
+     display: 'block'
+  }}
+/>
           </div>
         </div>
       </section>
@@ -532,7 +466,7 @@ function Landing() {
             margin: '0 auto 40px'
           }}>
             Join hundreds of healthcare facilities already using ASL Bridge to provide 
-            better care for deaf and hard-of-hearing patients. Start your free trial today.
+            better care for deaf and hard-of-hearing patients. Start to learn by joining to our website.
           </p>
           <div style={{
             display: 'flex',
@@ -590,7 +524,7 @@ function Landing() {
             fontWeight: '500',
             fontSize: '1rem'
           }}>
-            <span>✅ HIPAA Compliant</span>
+            <span>✅ Successful Conversions</span>
             <span>✅ 24/7 Support</span>
             <span>✅ Easy Integration</span>
           </div>
@@ -621,16 +555,20 @@ function Landing() {
                 alignItems: 'center',
                 justifyContent: 'center'
               }}>
-                <span style={{ color: 'white', fontSize: '22px' }}>🤟</span>
+               <img
+    src={logo}
+    alt="SignConnect Logo"
+    style={{ width: 50, height: 32 }}
+  />
               </div>
               <div>
-                <h3 style={{ fontSize: '1.2rem', fontWeight: '700', margin: 0 }}>ASL Bridge</h3>
-                <p style={{ color: '#a1a1aa', fontSize: '0.95rem', margin: 0 }}>Medical Translation</p>
+                <h3 style={{ fontSize: '1.2rem', fontWeight: '700', margin: 0 }}>SignConnect</h3>
+                <p style={{ color: '#a1a1aa', fontSize: '0.95rem', margin: 0 }}>ASL Translation</p>
               </div>
             </div>
             <p style={{ color: '#d1d5db', lineHeight: '1.7' }}>
               Leading the future of healthcare communication through innovative 
-              ASL translation technology, making medical care accessible to all.
+              ASL translation technology. Uniting the World, One Sign at a Time.
             </p>
           </div>
           <div>
@@ -664,7 +602,7 @@ function Landing() {
           <div>
             <h4 style={{ fontSize: '1.1rem', fontWeight: '600', marginBottom: '18px' }}>Contact</h4>
             <div style={{ color: '#d1d5db', fontSize: '1rem', marginBottom: '12px' }}>
-              <p>📧 support@aslbridge.com</p>
+              <p>📧 support@signconnect.com</p>
               <p>📞 1-800-ASL-HELP</p>
               <p>🚨 24/7 Emergency Support</p>
             </div>
@@ -694,7 +632,7 @@ function Landing() {
           color: '#a1a1aa',
           fontSize: '1rem'
         }}>
-          &copy; 2025 ASL Bridge. All rights reserved. HIPAA Compliant Healthcare Technology.
+          &copy; 2025 SignConnect. All rights reserved. 
         </div>
       </footer>
     </div>
