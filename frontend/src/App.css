@@ -2181,3 +2181,36 @@ h1 {
   color: #333;
   margin-bottom: 30px;
 }
+
+/* Add this to your App.css or index.css */
+.fade-transition {
+  transition: opacity 0.4s;
+  opacity: 1;
+  height: 100%;
+}
+.fade-transition.fade-out {
+  opacity: 0;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.seq-animate {
+  opacity: 0;
+  animation: fadeInUp 0.6s forwards;
+}
+
+.seq-delay-1 { animation-delay: 0.1s; }
+.seq-delay-2 { animation-delay: 0.3s; }
+.seq-delay-3 { animation-delay: 0.5s; }
+.seq-delay-4 { animation-delay: 0.7s; }
+.seq-delay-5 { animation-delay: 0.9s; }
+.seq-delay-6 { animation-delay: 1.1s; }
