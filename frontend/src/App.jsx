@@ -6,6 +6,7 @@ import Register from './pages/Register.jsx';
 import Landing from './pages/Landing.jsx';
 import Learn from './pages/Learn.jsx';
 import Alphabet from './pages/Alphabet.jsx';
+import SignInput from './pages/SignInput.jsx';
 import './App.css';
 
 function App() {
@@ -18,6 +19,8 @@ function App() {
         <Route path="/alphabet" element={<Alphabet />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/sign-input" element={<SignInput />} />
+        {/* Add more routes as needed */}
       </Routes>
     </Router>
   );
