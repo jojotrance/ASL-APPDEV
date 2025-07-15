@@ -1,0 +1,22 @@
+{
+  "num_classes": 1,
+  "sequence_length": 60,
+  "num_landmarks": 63,
+  "max_hands": 2,
+  "train_size": 4,
+  "val_size": 1,
+  "test_size": 2,
+  "train_ids": [
+    "07069",
+    "70212",
+    "68011",
+    "07068"
+  ],
+  "val_ids": [
+    "70266"
+  ],
+  "test_ids": [
+    "68012",
+    "69241"
+  ]
+}
