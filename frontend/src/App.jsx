@@ -6,6 +6,8 @@ import Register from './pages/Register.jsx';
 import Landing from './pages/Landing.jsx';
 import Learn from './pages/Learn.jsx';
 import Alphabet from './pages/Alphabet.jsx';
+import SignInput from './pages/SignInput.jsx';
+import VideoPlayer from './pages/VideoPlayer.jsx';
 import SignRecorder from './components/SignRecorder.jsx';
 import ModelTrainer from './components/ModelTrainer.jsx';
 import ASLDetectorPage from './pages/ASLDetectorPage.jsx';
@@ -22,8 +24,11 @@ function App() {
         <Route path="/model-trainer" element={<ModelTrainer />} />
         <Route path="/asl-detector" element={<ASLDetectorPage />} />
         <Route path="/alphabet" element={<Alphabet />} />
+        <Route path="/video" element={<VideoPlayer />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/sign-input" element={<SignInput />} />
+        {/* Add more routes as needed */}
       </Routes>
     </Router>
   );
