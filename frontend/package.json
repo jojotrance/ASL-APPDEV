@@ -10,7 +10,7 @@
     "start": "vite"
   },
   "dependencies": {
-    "@mediapipe/hands": "^0.4.1646424915",
+    "@mediapipe/hands": "^0.4.1675469240",
     "axios": "^1.5.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
