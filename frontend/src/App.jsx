@@ -6,11 +6,8 @@ import Register from './pages/Register.jsx';
 import Landing from './pages/Landing.jsx';
 import Learn from './pages/Learn.jsx';
 import Alphabet from './pages/Alphabet.jsx';
-<<<<<<< Updated upstream
 import SignInput from './pages/SignInput.jsx';
-=======
 import VideoPlayer from './pages/VideoPlayer.jsx';
->>>>>>> Stashed changes
 import './App.css';
 
 function App() {
