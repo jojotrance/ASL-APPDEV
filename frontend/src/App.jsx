@@ -8,6 +8,9 @@ import Learn from './pages/Learn.jsx';
 import Alphabet from './pages/Alphabet.jsx';
 import SignInput from './pages/SignInput.jsx';
 import VideoPlayer from './pages/VideoPlayer.jsx';
+import SignRecorder from './components/SignRecorder.jsx';
+import ModelTrainer from './components/ModelTrainer.jsx';
+import ASLDetectorPage from './pages/ASLDetectorPage.jsx';
 import './App.css';
 
 function App() {
@@ -17,6 +20,9 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/home" element={<Home />} />
         <Route path="/learn" element={<Learn />} />
+        <Route path="/sign-recorder" element={<SignRecorder />} />
+        <Route path="/model-trainer" element={<ModelTrainer />} />
+        <Route path="/asl-detector" element={<ASLDetectorPage />} />
         <Route path="/alphabet" element={<Alphabet />} />
         <Route path="/video" element={<VideoPlayer />} />
         <Route path="/login" element={<Login />} />
