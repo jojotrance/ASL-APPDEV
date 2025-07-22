@@ -16,6 +16,8 @@ import signRoutes from './routes/signs.js';
 import translateRoutes from './routes/translate.js';
 import userRoutes from './routes/users.js';
 import wlaslRouter from './routes/video.js';
+import statsRoute from './routes/stats.js';
+
 
 const app = express();
 app.use(cors());
@@ -27,6 +29,7 @@ app.use('/api/v1/signs', signRoutes);
 app.use('/api/v1/translate', translateRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/asl', wlaslRouter);
+app.use('/api/v1/stats', statsRoute);
 
 const PORT = process.env.PORT || 5000;
 

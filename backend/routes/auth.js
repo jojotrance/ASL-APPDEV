@@ -2,6 +2,7 @@ import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import auth from '../middleware/auth.js';
 import cloudinary from 'cloudinary';
 import multer from 'multer';
 
@@ -106,6 +107,12 @@ router.get('/profile', async (req, res) => {
   } catch (err) {
     res.status(401).json({ error: 'Invalid token' });
   }
+});
+
+router.get('/me', auth, async (req, res) => {
+  const user = await User.findById(req.user.id).select('email username');
+  if (!user) return res.status(404).json({ error: 'User not found' });
+  res.json(user);
 });
 
 export default router;

@@ -8,6 +8,8 @@ import Learn from './pages/Learn.jsx';
 import Alphabet from './pages/Alphabet.jsx';
 import SignInput from './pages/SignInput.jsx';
 import VideoPlayer from './pages/VideoPlayer.jsx';
+import Dashboard from './pages/Dashboard.jsx';
+import Users from './pages/Users.jsx';
 import './App.css';
 
 function App() {
@@ -22,6 +24,9 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/sign-input" element={<SignInput />} />
+
+        <Route path="/users" element={<Users />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         {/* Add more routes as needed */}
       </Routes>
     </Router>
