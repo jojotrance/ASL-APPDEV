@@ -1,5 +1,4 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Hands } from '@mediapipe/hands';
 
 function WebcamHandTracker({ onSignDetected, onConfidenceChange, onCameraInfo, onHandsDetected }) {
   const videoRef = useRef(null);
@@ -9,6 +8,8 @@ function WebcamHandTracker({ onSignDetected, onConfidenceChange, onCameraInfo, o
   const [trainedSigns, setTrainedSigns] = useState([]);
   const [isModelLoaded, setIsModelLoaded] = useState(false);
   const [cameraStarted, setCameraStarted] = useState(false);
+  const [mediapipeHands, setMediapipeHands] = useState(null);
+  const [isFallbackMode, setIsFallbackMode] = useState(false);
 
   // Detection buffers for more accurate recognition
   const [frameBuffer, setFrameBuffer] = useState([]);
@@ -302,30 +303,65 @@ const initializeMediaPipe = async () => {
   const ctx = canvas.getContext('2d');
   let frameId = 0;
 
+  // Start showing video feed immediately, even before MediaPipe loads
+  const showVideoFeed = () => {
+    if (video.readyState >= 2) { // HAVE_CURRENT_DATA
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.save();
+      ctx.scale(-1, 1);
+      ctx.translate(-canvas.width, 0);
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      ctx.restore();
+    }
+    
+    if (!mediapipeHands) {
+      requestAnimationFrame(showVideoFeed);
+    }
+  };
+  
+  // Start showing video immediately
+  showVideoFeed();
+
   try {
-    // Wait a bit for camera to be fully ready
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    console.log('🔄 Loading MediaPipe dynamically...');
+    
+    // Dynamic import to load MediaPipe
+    const { Hands } = await import('@mediapipe/hands');
+    
+    await new Promise(resolve => setTimeout(resolve, 500)); // Reduced delay
     
     const hands = new Hands({
       locateFile: (file) => {
-       return `/mediapipe-hands/${file}`;
+        // Use CDN sources for MediaPipe files to avoid local file issues
+        console.log('📁 Loading MediaPipe file:', file);
+        
+        // Priority order: CDN first, then local fallback
+        const cdnSources = [
+          `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1675469404/${file}`,
+          `https://unpkg.com/@mediapipe/hands@0.4.1675469404/${file}`,
+          `/mediapipe-hands/${file}` // Local fallback
+        ];
+        
+        // Return the CDN source
+        return cdnSources[0];
       },
     });
     
-    // Set options with simpler configuration
     hands.setOptions({
       maxNumHands: 2,
-      modelComplexity: 0,
-      minDetectionConfidence: 0.6,
+      modelComplexity: 0, // Use lighter model for better performance
+      minDetectionConfidence: 0.7,
       minTrackingConfidence: 0.5,
       selfieMode: true,
     });
     
+    // Add error handling for MediaPipe initialization
     hands.onResults((results) => {
       try {
+        // Always clear and draw the video feed first
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
-        // Mirror the canvas for drawing
+        // Mirror the canvas and draw video feed
         ctx.save();
         ctx.scale(-1, 1);
         ctx.translate(-canvas.width, 0);
@@ -363,7 +399,6 @@ const initializeMediaPipe = async () => {
             }
             return newBuffer;
           });
-
 
           // Draw hand landmarks (mirrored)
           for (let i = 0; i < results.multiHandLandmarks.length; i++) {
@@ -428,39 +463,81 @@ const initializeMediaPipe = async () => {
         console.error('Error in drawing:', drawError);
       }
     });
-
-    // Add error handler
-    hands.onError = (error) => {
-      console.error('MediaPipe error:', error);
-      setError(`MediaPipe error: ${error.message}`);
-    };
-
-    // Improved frame processing with error handling
-    let isProcessing = false;
+    
+    setMediapipeHands(hands);
+    console.log('✅ MediaPipe initialized successfully');
+    
+    // Start processing with improved error handling and recovery
+    let errorCount = 0;
+    const MAX_ERRORS = 10;
+    let lastErrorTime = 0;
     
     const processFrame = async () => {
       try {
-        if (video.readyState === video.HAVE_ENOUGH_DATA && !isProcessing) {
-          isProcessing = true;
+        if (video.readyState === 4 && hands) {
           await hands.send({ image: video });
-          isProcessing = false;
+          errorCount = 0; // Reset error count on successful frame
         }
+        requestAnimationFrame(processFrame);
       } catch (error) {
-        console.error('Frame processing error:', error);
-        isProcessing = false;
+        const now = Date.now();
+        errorCount++;
+        
+        console.warn(`Frame processing error (${errorCount}/${MAX_ERRORS}):`, error.message);
+        
+        // If we get too many errors in a short time, stop trying to avoid infinite loops
+        if (errorCount >= MAX_ERRORS && (now - lastErrorTime) < 5000) {
+          console.error('Too many MediaPipe errors, falling back to camera-only mode');
+          setIsFallbackMode(true);
+          return;
+        }
+        
+        lastErrorTime = now;
+        
+        // Continue processing with a small delay to prevent tight error loops
+        setTimeout(() => requestAnimationFrame(processFrame), 100);
       }
-      
-      requestAnimationFrame(processFrame);
     };
-
-    // Start processing with delay
-    setTimeout(() => {
-      processFrame();
-    }, 500);
-
-  } catch (err) {
-    console.error('MediaPipe initialization error:', err);
-    setError(`MediaPipe failed to initialize: ${err.message}`);
+    
+    setTimeout(processFrame, 500);
+    
+  } catch (error) {
+    console.error('MediaPipe initialization error:', error);
+    setIsFallbackMode(true);
+    
+    // Fallback: provide basic camera without hand tracking
+    const fallbackDraw = () => {
+      try {
+        if (video && canvas && video.readyState >= 2) {
+          const ctx = canvas.getContext('2d');
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          
+          // Mirror the canvas for drawing
+          ctx.save();
+          ctx.scale(-1, 1);
+          ctx.translate(-canvas.width, 0);
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          ctx.restore();
+          
+          // Show fallback message
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+          ctx.fillRect(10, 10, canvas.width - 20, 60);
+          ctx.fillStyle = '#fff';
+          ctx.font = '16px Arial';
+          ctx.textAlign = 'center';
+          ctx.fillText('Hand tracking unavailable', canvas.width / 2, 35);
+          ctx.fillText('Camera only mode', canvas.width / 2, 55);
+          ctx.textAlign = 'left';
+        }
+        requestAnimationFrame(fallbackDraw);
+      } catch (fallbackError) {
+        // If even fallback fails, just show the video element
+        console.error('Fallback drawing failed:', fallbackError);
+      }
+    };
+    
+    // Start fallback mode
+    setTimeout(fallbackDraw, 100);
   }
 };
 
@@ -526,8 +603,8 @@ const initializeMediaPipe = async () => {
         </div>
       )}
       
-      {/* Model Status Indicator */}
-      {cameraStarted && isModelLoaded && (
+      {/* Status Indicators */}
+      {cameraStarted && !isFallbackMode && isModelLoaded && (
         <div style={{
           position: 'absolute',
           top: '10px',
@@ -540,6 +617,22 @@ const initializeMediaPipe = async () => {
           fontSize: '12px'
         }}>
           ✅ {trainedSigns.length} Signs Ready
+        </div>
+      )}
+      
+      {isFallbackMode && (
+        <div style={{
+          position: 'absolute',
+          top: '10px',
+          left: '10px',
+          background: 'rgba(255, 152, 0, 0.9)',
+          color: 'white',
+          padding: '8px 12px',
+          borderRadius: '6px',
+          zIndex: 5,
+          fontSize: '12px'
+        }}>
+          📷 Camera Only Mode
         </div>
       )}
       

@@ -1,26 +1,57 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import rightImage from '../assets/pic.png';
-import FadeTransition from '../components/FadeTransition';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = async (e) => {
+  // Safely handle auth context - it might not be available
+  let login = () => {};
+  const navigate = useNavigate();
+  
+  try {
+    const auth = useAuth();
+    login = auth.login;
+  } catch (error) {
+    // useAuth is not available (component rendered outside AuthProvider)
+    console.log('Login rendered outside AuthProvider');
+  }
+
+    const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(''); // Clear previous errors
+    
     try {
       const res = await axios.post('/api/v1/auth/login', { email, password });
-      if (res.data.token) {
-        localStorage.setItem('token', res.data.token);
-        window.location = '/';
+      
+      if (res.data.token && res.data.user) {
+        // Check if user role is 'guest' (pending approval)
+        if (res.data.user.role === 'guest') {
+          login(res.data.user, res.data.token);
+          navigate('/pending-approval');
+          return;
+        }
+        
+        // Check if user is admin and redirect to dashboard
+        if (res.data.user.role === 'admin') {
+          login(res.data.user, res.data.token);
+          navigate('/dashboard');
+          return;
+        }
+        
+        login(res.data.user, res.data.token);
+        navigate('/home2'); // Redirect to home2 after successful login for regular users
       } else {
         setError(res.data.message || 'Login failed');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
+      console.error('Login error:', err);
+      setError(err.response?.data?.error || err.response?.data?.message || 'Login failed');
     }
   };
 
@@ -223,7 +254,7 @@ function Login() {
               href="#"
               onClick={e => {
                 e.preventDefault();
-                window.location = '/register';
+                navigate('/register');
               }}
               style={{
                 color: '#8b5cf6',

@@ -115,4 +115,150 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// Calculate similarity between two landmark sets
+function calculateSimilarity(landmarks1, landmarks2) {
+  try {
+    if (!landmarks1 || !landmarks2 || landmarks1.length === 0 || landmarks2.length === 0) {
+      return 0;
+    }
+
+    // Normalize incoming landmarks (from camera) - array format
+    const normalizedLandmarks1 = landmarks1.map(frame => {
+      if (Array.isArray(frame)) {
+        return frame; // Already in correct format: array of hands
+      }
+      return frame;
+    });
+
+    // Normalize database landmarks - object format with metadata
+    const normalizedLandmarks2 = landmarks2.map(frame => {
+      if (frame && frame.landmarks && Array.isArray(frame.landmarks)) {
+        return frame.landmarks; // Extract landmarks array from metadata object
+      }
+      if (Array.isArray(frame)) {
+        return frame; // Already in correct format
+      }
+      return [];
+    });
+
+    let totalSimilarity = 0;
+    let comparisonCount = 0;
+
+    // Compare landmarks frame by frame
+    const minFrames = Math.min(normalizedLandmarks1.length, normalizedLandmarks2.length);
+    
+    for (let frameIdx = 0; frameIdx < minFrames; frameIdx++) {
+      const frame1 = normalizedLandmarks1[frameIdx];
+      const frame2 = normalizedLandmarks2[frameIdx];
+      
+      if (!frame1 || !frame2) continue;
+      
+      // Compare each hand in the frame
+      const minHands = Math.min(frame1.length, frame2.length);
+      
+      for (let handIdx = 0; handIdx < minHands; handIdx++) {
+        const hand1 = frame1[handIdx];
+        const hand2 = frame2[handIdx];
+        
+        if (!hand1 || !hand2) continue;
+        
+        // Compare each landmark point
+        const minPoints = Math.min(hand1.length, hand2.length);
+        let handSimilarity = 0;
+        
+        for (let pointIdx = 0; pointIdx < minPoints; pointIdx++) {
+          const point1 = hand1[pointIdx];
+          const point2 = hand2[pointIdx];
+          
+          if (!point1 || !point2) continue;
+          
+          // Calculate Euclidean distance
+          const dx = (point1.x || 0) - (point2.x || 0);
+          const dy = (point1.y || 0) - (point2.y || 0);
+          const dz = (point1.z || 0) - (point2.z || 0);
+          
+          const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+          
+          // Convert distance to similarity (closer = more similar)
+          // Use a more forgiving threshold since hand positions vary
+          const pointSimilarity = Math.max(0, 1 - (distance * 2)); // Scale distance
+          handSimilarity += pointSimilarity;
+        }
+        
+        if (minPoints > 0) {
+          handSimilarity /= minPoints;
+          totalSimilarity += handSimilarity;
+          comparisonCount++;
+        }
+      }
+    }
+    
+    if (comparisonCount === 0) return 0;
+    
+    // Calculate average similarity and convert to percentage
+    const avgSimilarity = totalSimilarity / comparisonCount;
+    return Math.max(0, Math.min(100, avgSimilarity * 100));
+    
+  } catch (error) {
+    console.error('Error calculating similarity:', error);
+    return 0;
+  }
+}
+
+// Prediction endpoint
+router.post('/predict', async (req, res) => {
+  try {
+    const { landmarks } = req.body;
+
+    if (!landmarks || landmarks.length === 0) {
+      return res.json({ word: null, confidence: 0 });
+    }
+
+    // Get all signs from database
+    const signs = await Sign.find();
+    
+    if (!signs || signs.length === 0) {
+      return res.json({ 
+        error: 'No trained signs found in database',
+        word: null, 
+        confidence: 0 
+      });
+    }
+
+    let bestMatch = null;
+    let bestConfidence = 0;
+
+    // Compare input landmarks with each trained sign
+    for (const sign of signs) {
+      if (!sign.frames || sign.frames.length === 0) continue;
+      
+      const similarity = calculateSimilarity(landmarks, sign.frames);
+      
+      if (similarity > bestConfidence) {
+        bestConfidence = similarity;
+        bestMatch = sign.word;
+      }
+    }
+
+    // Set minimum confidence threshold to 50%
+    const minConfidence = 50;
+    
+    if (bestConfidence < minConfidence) {
+      return res.json({ word: null, confidence: 0 });
+    }
+
+    // Only log successful matches
+    console.log(`✅ "${bestMatch}" (${bestConfidence.toFixed(0)}%)`);
+    
+    res.json({
+      word: bestMatch,
+      confidence: bestConfidence
+    });
+
+  } catch (error) {
+    console.error('❌ Prediction error:', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 export default router;

@@ -1,0 +1,469 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import WebcamHandTracker from '../components/WebcamHandTracker.jsx';
+
+function Learn() {
+  const navigate = useNavigate();
+  const [selectedCategory, setSelectedCategory] = useState('alphabet');
+  const [selectedLetter, setSelectedLetter] = useState(null);
+  const [practiceMode, setPracticeMode] = useState(false);
+  const [practiceResult, setPracticeResult] = useState(null);
+  const [currentLetterPractice, setCurrentLetterPractice] = useState(null);
+  const videoRef = useRef(null);
+  const [countdown, setCountdown] = useState(null);
+
+  // Learning data for all categories
+  const alphabetData = [
+    { letter: 'A', videoUrl: '/alphabet-videos/A.mp4', description: 'Make a fist with your thumb to the side', difficulty: 'Easy' },
+    { letter: 'B', videoUrl: '/alphabet-videos/B.mp4', description: 'Four fingers straight up, thumb tucked', difficulty: 'Easy' },
+    { letter: 'C', videoUrl: '/alphabet-videos/C.mp4', description: 'Shape your hand like the letter C', difficulty: 'Easy' },
+    { letter: 'D', videoUrl: '/alphabet-videos/D.mp4', description: 'Point finger up, touch thumb to other fingers', difficulty: 'Easy' },
+    { letter: 'E', videoUrl: '/alphabet-videos/E.mp4', description: 'Curl all fingertips to touch thumb', difficulty: 'Medium' },
+    { letter: 'F', videoUrl: '/alphabet-videos/F.mp4', description: 'OK sign with index and thumb circle', difficulty: 'Medium' },
+    { letter: 'G', videoUrl: '/alphabet-videos/G.mp4', description: 'Point index finger sideways, thumb up', difficulty: 'Easy' },
+    { letter: 'H', videoUrl: '/alphabet-videos/H.mp4', description: 'Two fingers pointing sideways', difficulty: 'Easy' },
+    { letter: 'I', videoUrl: '/alphabet-videos/I.mp4', description: 'Pinky finger up, other fingers down', difficulty: 'Easy' },
+    { letter: 'J', videoUrl: '/alphabet-videos/J.mp4', description: 'Pinky up, draw a J in the air', difficulty: 'Hard' },
+    { letter: 'K', videoUrl: '/alphabet-videos/K.mp4', description: 'Index and middle up, thumb between them', difficulty: 'Medium' },
+    { letter: 'L', videoUrl: '/alphabet-videos/L.mp4', description: 'Thumb and index finger form L shape', difficulty: 'Easy' },
+    { letter: 'M', videoUrl: '/alphabet-videos/M.mp4', description: 'Thumb under three fingers', difficulty: 'Medium' },
+    { letter: 'N', videoUrl: '/alphabet-videos/N.mp4', description: 'Thumb under two fingers', difficulty: 'Medium' },
+    { letter: 'O', videoUrl: '/alphabet-videos/O.mp4', description: 'All fingertips touch thumb in O shape', difficulty: 'Easy' },
+    { letter: 'P', videoUrl: '/alphabet-videos/P.mp4', description: 'K hand pointing down', difficulty: 'Medium' },
+    { letter: 'Q', videoUrl: '/alphabet-videos/Q.mp4', description: 'G hand pointing down', difficulty: 'Medium' },
+    { letter: 'R', videoUrl: '/alphabet-videos/R.mp4', description: 'Cross middle finger over index', difficulty: 'Hard' },
+    { letter: 'S', videoUrl: '/alphabet-videos/S.mp4', description: 'Make a fist with thumb over fingers', difficulty: 'Easy' },
+    { letter: 'T', videoUrl: '/alphabet-videos/T.mp4', description: 'Thumb between index and middle finger', difficulty: 'Medium' },
+    { letter: 'U', videoUrl: '/alphabet-videos/U.mp4', description: 'Two fingers up together', difficulty: 'Easy' },
+    { letter: 'V', videoUrl: '/alphabet-videos/V.mp4', description: 'Two fingers up in V shape', difficulty: 'Easy' },
+    { letter: 'W', videoUrl: '/alphabet-videos/W.mp4', description: 'Three fingers up together', difficulty: 'Medium' },
+    { letter: 'X', videoUrl: '/alphabet-videos/X.mp4', description: 'Index finger curved like a hook', difficulty: 'Medium' },
+    { letter: 'Y', videoUrl: '/alphabet-videos/Y.mp4', description: 'Thumb and pinky out, others down', difficulty: 'Easy' },
+    { letter: 'Z', videoUrl: '/alphabet-videos/Z.mp4', description: 'Draw Z in the air with index finger', difficulty: 'Hard' }
+  ];
+
+  const numbersData = [
+    { number: '0', videoUrl: '/numbers-videos/0.mp4', description: 'Make an O shape with your hand', difficulty: 'Easy' },
+    { number: '1', videoUrl: '/numbers-videos/1.mp4', description: 'Hold up your index finger', difficulty: 'Easy' },
+    { number: '2', videoUrl: '/numbers-videos/2.mp4', description: 'Hold up index and middle finger in V shape', difficulty: 'Easy' },
+    { number: '3', videoUrl: '/numbers-videos/3.mp4', description: 'Hold up thumb, index, and middle finger', difficulty: 'Easy' },
+    { number: '4', videoUrl: '/numbers-videos/4.mp4', description: 'Hold up four fingers, thumb tucked', difficulty: 'Easy' },
+    { number: '5', videoUrl: '/numbers-videos/5.mp4', description: 'Hold up all five fingers spread apart', difficulty: 'Easy' },
+    { number: '6', videoUrl: '/numbers-videos/6.mp4', description: 'Touch thumb to pinky, other fingers up', difficulty: 'Medium' },
+    { number: '7', videoUrl: '/numbers-videos/7.mp4', description: 'Touch thumb to ring finger, other fingers up', difficulty: 'Medium' },
+    { number: '8', videoUrl: '/numbers-videos/8.mp4', description: 'Touch thumb to middle finger, other fingers up', difficulty: 'Medium' },
+    { number: '9', videoUrl: '/numbers-videos/9.mp4', description: 'Touch thumb to index finger, other fingers up', difficulty: 'Medium' }
+  ];
+
+  const greetingsData = [
+    { word: 'Hello', videoUrl: '/greetings-videos/hello.mp4', description: 'Wave your hand or touch forehead and move forward', difficulty: 'Easy' },
+    { word: 'Goodbye', videoUrl: '/greetings-videos/goodbye.mp4', description: 'Wave your hand back and forth', difficulty: 'Easy' },
+    { word: 'Please', videoUrl: '/greetings-videos/please.mp4', description: 'Open hand on chest, move in circular motion', difficulty: 'Medium' },
+    { word: 'Thank you', videoUrl: '/greetings-videos/thank_you.mp4', description: 'Touch fingers to chin, move hand forward', difficulty: 'Medium' },
+    { word: 'Sorry', videoUrl: '/greetings-videos/sorry.mp4', description: 'Make a fist and rub in circular motion on chest', difficulty: 'Medium' },
+    { word: 'Yes', videoUrl: '/greetings-videos/yes.mp4', description: 'Make a fist and nod it up and down like a head', difficulty: 'Easy' },
+    { word: 'No', videoUrl: '/greetings-videos/no.mp4', description: 'Snap index and middle finger with thumb', difficulty: 'Easy' },
+    { word: 'Good morning', videoUrl: '/greetings-videos/good_morning.mp4', description: 'Sign "good" then "morning" with sunrise motion', difficulty: 'Hard' },
+    { word: 'Good night', videoUrl: '/greetings-videos/good_night.mp4', description: 'Sign "good" then "night" with sunset motion', difficulty: 'Hard' },
+    { word: 'Nice to meet you', videoUrl: '/greetings-videos/nice_meet.mp4', description: 'Sign "nice" + "meet" + "you" in sequence', difficulty: 'Hard' }
+  ];
+
+  const categories = [
+    { id: 'alphabet', name: 'Alphabet', icon: '🔤', description: 'Learn the ASL alphabet' },
+    { id: 'numbers', name: 'Numbers', icon: '🔢', description: 'Learn numbers 0-9' },
+    { id: 'greetings', name: 'Greetings', icon: '👋', description: 'Common greetings and polite expressions' }
+  ];
+
+  const startPractice = (letter) => {
+    setCurrentLetterPractice(letter);
+    setPracticeMode(true);
+    setPracticeResult(null);
+    setCountdown(3);
+    
+    // Countdown before starting practice
+    let count = 3;
+    const countdownInterval = setInterval(() => {
+      count--;
+      setCountdown(count);
+      if (count === 0) {
+        clearInterval(countdownInterval);
+        setCountdown(null);
+      }
+    }, 1000);
+  };
+
+  const handlePrediction = (prediction) => {
+    if (currentLetterPractice && prediction) {
+      const isCorrect = prediction.toLowerCase() === currentLetterPractice.toLowerCase();
+      setPracticeResult({
+        correct: isCorrect,
+        predicted: prediction,
+        expected: currentLetterPractice
+      });
+      
+      // Auto close practice mode after showing result
+      setTimeout(() => {
+        setPracticeMode(false);
+        setPracticeResult(null);
+        setCurrentLetterPractice(null);
+      }, 3000);
+    }
+  };
+
+  const playVideo = (letter) => {
+    setSelectedLetter(letter);
+    if (videoRef.current) {
+      videoRef.current.play();
+    }
+  };
+
+  const handleCategoryClick = (categoryId) => {
+    setSelectedCategory(categoryId);
+    setSelectedLetter(null);
+  };
+
+  return (
+    <div className="learn-container">
+      <div className="learn-header">
+        <h1>Learn ASL</h1>
+        <p>Choose a category to start learning American Sign Language</p>
+      </div>
+
+      {/* Category Selection */}
+      <div className="categories-section">
+        <h2>Categories</h2>
+        <div className="categories-grid">
+          {categories.map((category) => (
+            <div
+              key={category.id}
+              className={`category-card ${selectedCategory === category.id ? 'active' : ''}`}
+              onClick={() => handleCategoryClick(category.id)}
+            >
+              <div className="category-icon">{category.icon}</div>
+              <h3>{category.name}</h3>
+              <p>{category.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Alphabet Learning Section */}
+      {selectedCategory === 'alphabet' && (
+        <div className="alphabet-section">
+          <h2>ASL Alphabet</h2>
+          
+          {/* Video Tutorial Section */}
+          <div className="video-tutorial-section">
+            <div className="video-container">
+              {selectedLetter ? (
+                <div className="tutorial-video">
+                  <video
+                    ref={videoRef}
+                    controls
+                    width="400"
+                    height="300"
+                    onError={() => console.log('Video not found, using placeholder')}
+                  >
+                    <source src={alphabetData.find(item => item.letter === selectedLetter)?.videoUrl} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                  <div className="video-info">
+                    <h3>Letter {selectedLetter}</h3>
+                    <p>{alphabetData.find(item => item.letter === selectedLetter)?.description}</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="video-placeholder">
+                  <div className="placeholder-content">
+                    <span>📹</span>
+                    <p>Select a letter to watch the tutorial video</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Alphabet Grid */}
+          <div className="alphabet-grid">
+            {alphabetData.map((item) => (
+              <div key={item.letter} className="alphabet-card">
+                <div className="letter-display">
+                  <h2>{item.letter}</h2>
+                </div>
+                <div className="card-actions">
+                  <button
+                    className="watch-btn"
+                    onClick={() => playVideo(item.letter)}
+                  >
+                    📹 Watch
+                  </button>
+                  <button
+                    className="practice-btn"
+                    onClick={() => startPractice(item.letter)}
+                  >
+                    🎯 Practice
+                  </button>
+                </div>
+                <p className="letter-description">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Practice Mode Modal */}
+      {practiceMode && (
+        <div className="practice-modal">
+          <div className="practice-content">
+            <div className="practice-header">
+              <h2>Practice Letter {currentLetterPractice}</h2>
+              <button 
+                className="close-btn"
+                onClick={() => {
+                  setPracticeMode(false);
+                  setPracticeResult(null);
+                  setCurrentLetterPractice(null);
+                }}
+              >
+                ✕
+              </button>
+            </div>
+
+            {countdown !== null ? (
+              <div className="countdown">
+                <h3>Get ready!</h3>
+                <div className="countdown-number">{countdown || 'GO!'}</div>
+              </div>
+            ) : (
+              <div className="practice-area">
+                <div className="webcam-section">
+                  <WebcamHandTracker onPrediction={handlePrediction} />
+                </div>
+
+                <div className="practice-instructions">
+                  <h3>Sign the letter "{currentLetterPractice}"</h3>
+                  <p>{alphabetData.find(item => item.letter === currentLetterPractice)?.description}</p>
+                  
+                  {practiceResult && (
+                    <div className={`result ${practiceResult.correct ? 'correct' : 'incorrect'}`}>
+                      {practiceResult.correct ? (
+                        <div className="success-message">
+                          <span className="result-icon">✅</span>
+                          <h3>Correct!</h3>
+                          <p>Great job signing "{practiceResult.expected}"!</p>
+                        </div>
+                      ) : (
+                        <div className="error-message">
+                          <span className="result-icon">❌</span>
+                          <h3>Try Again!</h3>
+                          <p>You signed "{practiceResult.predicted}", but we were looking for "{practiceResult.expected}"</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default Learn;
+      {/* Header */}
+      <header className="learn-header">
+        <div className="header-content">
+          <h1 className="page-title">
+            <span className="title-icon">📚</span>
+            Learn ASL
+          </h1>
+          <p className="page-subtitle">Master American Sign Language step by step</p>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="learn-content">
+        {/* Categories Section */}
+        <section className="categories-section">
+          <div className="section-header">
+            <h2>Learning Categories</h2>
+            <div className="progress-indicator">
+              <span>Progress: 45%</span>
+              <div className="progress-bar">
+                <div className="progress-fill" style={{ width: '45%' }}></div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="categories-grid">
+            {categories.map(category => (
+              <button
+                key={category.id}
+                className={`category-card ${selectedCategory === category.id ? 'active' : ''}`}
+                onClick={() => handleCategoryClick(category.id)}
+              >
+                <div className="category-icon">{category.icon}</div>
+                <h3>{category.name}</h3>
+                <p>{category.description}</p>
+                <div className="category-stats">
+                  <span className="completed">8/12 Complete</span>
+                </div>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* Learning Content */}
+        <div className="learning-layout">
+          {/* Signs List */}
+          <section className="signs-section">
+            <div className="section-header">
+              <h2>
+                {categories.find(cat => cat.id === selectedCategory)?.name} Signs
+              </h2>
+              <div className="view-controls">
+                <button 
+                  className={`view-btn ${!practiceMode ? 'active' : ''}`}
+                  onClick={() => setPracticeMode(false)}
+                >
+                  📖 Learn
+                </button>
+                <button 
+                  className={`view-btn ${practiceMode ? 'active' : ''}`}
+                  onClick={() => setPracticeMode(true)}
+                >
+                  🎯 Practice
+                </button>
+              </div>
+            </div>
+
+            <div className="signs-grid">
+              {getCurrentSigns().map((sign, index) => (
+                <div
+                  key={index}
+                  className={`sign-card ${selectedSign === index ? 'selected' : ''}`}
+                  onClick={() => setSelectedSign(index)}
+                >
+                  <div className="sign-visual">
+                    <div className="sign-placeholder">
+                      <span className="sign-letter">{sign.name}</span>
+                    </div>
+                    <div 
+                      className="difficulty-badge"
+                      style={{ backgroundColor: getDifficultyColor(sign.difficulty) }}
+                    >
+                      {sign.difficulty}
+                    </div>
+                  </div>
+                  <div className="sign-info">
+                    <h4>{sign.name}</h4>
+                    <p>{sign.description}</p>
+                  </div>
+                  <div className="sign-actions">
+                    <button className="action-btn practice-btn">
+                      <span className="btn-icon">▶️</span>
+                      Practice
+                    </button>
+                    <button className="action-btn favorite-btn">
+                      <span className="btn-icon">⭐</span>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Detail Panel */}
+          <section className="detail-section">
+            {selectedSign !== null ? (
+              <div className="sign-detail">
+                <div className="detail-header">
+                  <h3>Learning: {getCurrentSigns()[selectedSign]?.name}</h3>
+                  <div 
+                    className="difficulty-indicator"
+                    style={{ color: getDifficultyColor(getCurrentSigns()[selectedSign]?.difficulty) }}
+                  >
+                    {getCurrentSigns()[selectedSign]?.difficulty} Level
+                  </div>
+                </div>
+
+                <div className="detail-content">
+                  <div className="video-placeholder">
+                    <div className="video-container">
+                      <span className="video-icon">🎥</span>
+                      <p>Video demonstration</p>
+                      <button className="play-btn">
+                        <span>▶️</span> Play Video
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="instructions">
+                    <h4>How to sign:</h4>
+                    <p>{getCurrentSigns()[selectedSign]?.description}</p>
+                    
+                    <div className="tips">
+                      <h5>💡 Tips:</h5>
+                      <ul>
+                        <li>Keep your hand steady and clear</li>
+                        <li>Practice slowly at first</li>
+                        <li>Watch your hand position in the mirror</li>
+                        <li>Repeat 5-10 times for muscle memory</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div className="practice-controls">
+                    <button className="control-btn primary">
+                      <span className="btn-icon">📷</span>
+                      Practice with Camera
+                    </button>
+                    <button className="control-btn secondary">
+                      <span className="btn-icon">🔄</span>
+                      Repeat Video
+                    </button>
+                    <button className="control-btn secondary">
+                      <span className="btn-icon">✅</span>
+                      Mark as Learned
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="no-selection">
+                <div className="placeholder-content">
+                  <span className="placeholder-icon">👈</span>
+                  <h3>Select a sign to learn</h3>
+                  <p>Choose a sign from the list to see detailed instructions and video demonstrations.</p>
+                </div>
+              </div>
+            )}
+
+            {/* Learning Stats */}
+            <div className="learning-stats">
+              <h4>Your Progress</h4>
+              <div className="stats-grid">
+                <div className="stat-item">
+                  <span className="stat-number">47</span>
+                  <span className="stat-label">Signs Learned</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-number">12</span>
+                  <span className="stat-label">Days Streak</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-number">89%</span>
+                  <span className="stat-label">Accuracy</span>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+export default Learn;

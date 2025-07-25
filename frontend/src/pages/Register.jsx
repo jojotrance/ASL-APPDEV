@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
-import rightImage from '../assets/pic.png'; // Use the same image as Login
+import rightImage from '../assets/pic.png';
 import FadeTransition from '../components/FadeTransition';
 
 function Register() {
@@ -13,18 +15,39 @@ function Register() {
   });
   const [photo, setPhoto] = useState(null);
   const [error, setError] = useState('');
+  
+  // Safely handle auth context - it might not be available
+  let login = () => {};
+  const navigate = useNavigate();
+  
+  try {
+    const auth = useAuth();
+    login = auth.login;
+  } catch (error) {
+    // useAuth is not available (component rendered outside AuthProvider)
+    console.log('Register rendered outside AuthProvider');
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(''); // Clear previous errors
+    
     const data = new FormData();
     Object.entries(form).forEach(([key, val]) => data.append(key, val));
     if (photo) data.append('photo', photo);
 
     try {
-      await axios.post('/api/v1/auth/register', data);
-      window.location = '/login';
+      const res = await axios.post('/api/v1/auth/register', data);
+      
+      if (res.data.token && res.data.user) {
+        login(res.data.user, res.data.token);
+        navigate('/pending-approval'); // Redirect to pending approval page after registration
+      } else {
+        setError(res.data.message || 'Registration failed');
+      }
     } catch (err) {
-      setError(err.response?.data?.error || 'Registration failed');
+      console.error('Registration error:', err);
+      setError(err.response?.data?.error || err.response?.data?.message || 'Registration failed');
     }
   };
 
@@ -314,7 +337,7 @@ function Register() {
             href="#"
             onClick={e => {
               e.preventDefault();
-              window.location = '/login';
+              navigate('/login');
             }}
             style={{
               color: '#8b5cf6',

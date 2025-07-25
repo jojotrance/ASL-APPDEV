@@ -1,0 +1,35 @@
+{
+  "timestamp": "20250725_234858",
+  "total_signs": 15,
+  "sign_labels": [
+    "hello",
+    "thank you",
+    "please",
+    "your",
+    "name",
+    "what",
+    "i love you",
+    "yes",
+    "no",
+    "nice",
+    "meet",
+    "you",
+    "a",
+    "b",
+    "c"
+  ],
+  "models": {
+    "Random Forest": {
+      "accuracy": 0.6923076923076923,
+      "cv_score": 0.6282051282051282
+    },
+    "Neural Network": {
+      "accuracy": 0.6923076923076923,
+      "cv_score": 0.6282051282051282
+    },
+    "SVM": {
+      "accuracy": 0.6923076923076923,
+      "cv_score": 0.5833333333333334
+    }
+  }
+}

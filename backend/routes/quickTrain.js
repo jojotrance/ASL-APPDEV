@@ -4,6 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import { spawn } from 'child_process';
 import { fileURLToPath } from 'url';
+import Sign from '../models/Sign.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -96,6 +97,26 @@ router.post('/quick-train', upload.single('video'), async (req, res) => {
   } catch (err) {
     console.error('❌ Quick training error:', err);
     res.status(500).json({ error: err.message });
+  }
+});
+
+// Get all signs for recognition
+router.get('/signs', async (req, res) => {
+  try {
+    console.log('📡 QuickTrain: Fetching signs for recognition...');
+    
+    const signs = await Sign.find({});
+    console.log(`✅ QuickTrain: Found ${signs.length} signs in database`);
+    
+    const trainingData = signs.map(sign => ({
+      label: sign.word,
+      frames: sign.frames
+    }));
+    
+    res.json({ signs: trainingData });
+  } catch (error) {
+    console.error('❌ QuickTrain signs error:', error);
+    res.status(500).json({ error: 'Failed to fetch signs' });
   }
 });
 

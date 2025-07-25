@@ -9,6 +9,11 @@ const userSchema = new mongoose.Schema({
     enum: ['male', 'female', 'rather not to say'], 
     default: 'rather not to say' 
   },
+  role: {
+    type: String,
+    enum: ['guest', 'user', 'admin'],
+    default: 'guest' // When user registers, they start as 'guest' and admin approves them
+  },
   photo: {
     public_id: String,
     url: String,

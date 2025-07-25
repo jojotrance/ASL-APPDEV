@@ -1,0 +1,58 @@
+{
+  "created": "2025-07-22T10:09:01.674Z",
+  "type": "ASL_Signs",
+  "category": "greetings",
+  "fps": 30,
+  "duration_seconds": 3,
+  "resolution": "640x480",
+  "videos": {
+    "Hello": {
+      "filename": "Hello_3.webm",
+      "sign": "Hello",
+      "category": "greetings",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T10:09:01.674Z"
+    },
+    "Goodbye": {
+      "filename": "Goodbye_3.webm",
+      "sign": "Goodbye",
+      "category": "greetings",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T10:09:01.674Z"
+    },
+    "Please": {
+      "filename": "Please_3.webm",
+      "sign": "Please",
+      "category": "greetings",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T10:09:01.674Z"
+    },
+    "Thank You": {
+      "filename": "Thank You_3.webm",
+      "sign": "Thank You",
+      "category": "greetings",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T10:09:01.674Z"
+    },
+    "Sorry": {
+      "filename": "Sorry_3.webm",
+      "sign": "Sorry",
+      "category": "greetings",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T10:09:01.674Z"
+    },
+    "You're Welcome": {
+      "filename": "You're Welcome_2.webm",
+      "sign": "You're Welcome",
+      "category": "greetings",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T10:09:01.674Z"
+    }
+  }
+}

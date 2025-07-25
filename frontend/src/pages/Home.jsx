@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import WebcamHandTracker from '../components/WebcamHandTracker.jsx';
+import SimpleHandTracker from '../components/SimpleHandTracker.jsx';
 
 function Home() {
   const [translatedText, setTranslatedText] = useState('');
@@ -17,53 +17,51 @@ function Home() {
     status: 'Initializing'
   });
   const [trainedSignsCount, setTrainedSignsCount] = useState(0);
+  const [trainedSigns, setTrainedSigns] = useState([]); // Store the actual trained signs
 
-// Handle sign detection from webcam
-const handleSignDetected = (detectedWord) => {
-  setCurrentSign(detectedWord);
-  setTranslatedText(detectedWord);
-  
-  // Add to history if it's a new detection
-  const timestamp = new Date().toLocaleTimeString();
-  setDetectionHistory(prev => {
-    const newHistory = [...prev];
+  // Handle sign prediction from SimpleHandTracker
+  const handlePrediction = (detectedWord, confidence) => {
+    console.log(`🎯 Home.jsx received prediction: "${detectedWord}" with confidence: ${confidence}%`);
     
-    // Only add if it's different from the last detection
-    if (newHistory.length === 0 || newHistory[0].text !== detectedWord) {
-      const uniqueId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      
-      newHistory.unshift({
-        text: detectedWord,
-        confidence: confidence,
-        timestamp: timestamp,
-        id: uniqueId
-      });
-      
-      // Update session stats
-      setSessionStats(prevStats => ({
-        ...prevStats,
-        totalDetections: prevStats.totalDetections + 1
-      }));
-      
-      // Keep only last 10 detections
-      return newHistory.slice(0, 10);
-    }
+    setCurrentSign(detectedWord);
+    setTranslatedText(detectedWord);
+    setConfidence(confidence);
     
-    return newHistory;
-  });
-};
-
-  // Handle confidence updates
-  const handleConfidenceChange = (newConfidence) => {
-    setConfidence(newConfidence);
+    // Add to history if it's a new detection
+    const timestamp = new Date().toLocaleTimeString();
+    setDetectionHistory(prev => {
+      const newHistory = [...prev];
+      
+      // Only add if it's different from the last detection or confidence changed significantly
+      if (newHistory.length === 0 || 
+          newHistory[0].text !== detectedWord || 
+          Math.abs(newHistory[0].confidence - confidence) > 10) {
+        const uniqueId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+        
+        newHistory.unshift({
+          text: detectedWord,
+          confidence: confidence,
+          timestamp: timestamp,
+          id: uniqueId
+        });
+        
+        // Update session stats
+        setSessionStats(prevStats => ({
+          ...prevStats,
+          totalDetections: prevStats.totalDetections + 1
+        }));
+        
+        // Keep only last 10 detections
+        return newHistory.slice(0, 10);
+      }
+      
+      return newHistory;
+    });
   };
 
-  // Handle camera info updates
-  const handleCameraInfo = (info) => {
-    setCameraInfo(prev => ({
-      ...prev,
-      ...info
-    }));
+  // Handle confidence updates (called by SimpleHandTracker)
+  const handleConfidenceChange = (newConfidence) => {
+    setConfidence(newConfidence);
   };
 
   // Handle hands detection status
@@ -74,21 +72,37 @@ const handleSignDetected = (detectedWord) => {
     }));
   };
 
-  // Load trained signs count
+  // Load trained signs count for display
   useEffect(() => {
-    const loadTrainedSignsCount = async () => {
+    const loadTrainedSigns = async () => {
       try {
-        const response = await fetch('/api/v1/signs/training-data');
+        console.log('🔄 Loading trained signs from database...');
+        
+        const response = await fetch('/api/v1/signs');
         if (response.ok) {
           const data = await response.json();
-          setTrainedSignsCount(data.length);
+          console.log('✅ Loaded trained signs:', data);
+          
+          if (Array.isArray(data)) {
+            setTrainedSigns(data);
+            setTrainedSignsCount(data.length);
+            console.log(`✅ Found ${data.length} trained signs for recognition`);
+            
+            // Log the sign names for debugging
+            const signNames = data.map(sign => sign.word || sign.label).join(', ');
+            console.log(`📝 Available signs: [${signNames}]`);
+          } else {
+            console.log('⚠️ Unexpected data format:', data);
+          }
+        } else {
+          console.error('❌ Failed to load trained signs:', response.status, response.statusText);
         }
       } catch (error) {
-        console.error('Error loading trained signs count:', error);
+        console.error('❌ Error loading trained signs:', error);
       }
     };
     
-    loadTrainedSignsCount();
+    loadTrainedSigns();
   }, []);
 
   // Calculate dynamic statistics
@@ -136,19 +150,6 @@ const handleSignDetected = (detectedWord) => {
 
   return (
     <div className="home-container">
-      {/* Header */}
-      <header className="home-header">
-        <div className="header-content">
-          <h1 className="app-title">
-            <span className="title-icon">👋</span>
-            ASL Translator
-          </h1>
-          <p className="app-subtitle">
-            American Sign Language Recognition • {trainedSignsCount} Signs Trained
-          </p>
-        </div>
-      </header>
-
       {/* Main Content */}
       <main className="main-content">
         <div className="camera-section">
@@ -164,85 +165,33 @@ const handleSignDetected = (detectedWord) => {
             </div>
             
             <div className="camera-wrapper">
-              <WebcamHandTracker 
-                onSignDetected={handleSignDetected}
-                onConfidenceChange={handleConfidenceChange}
-                onCameraInfo={handleCameraInfo}
+              <SimpleHandTracker 
                 onHandsDetected={handleHandsDetected}
+                onConfidenceChange={handleConfidenceChange}
+                onPrediction={handlePrediction}
+                mode="recognition"
+                trainedSigns={trainedSigns}
               />
-              <div className="camera-overlay">
-                <div className="detection-frame"></div>
-                <div className="hand-indicators">
-                  <div className="hand-indicator left-hand">
-                    <div className="hand-icon">✋</div>
-                    <span>Left Hand</span>
-                    <div className={`detection-status ${sessionStats.handsDetected.left ? 'detected' : 'not-detected'}`}>
-                      {sessionStats.handsDetected.left ? 'Detected' : 'Not Detected'}
-                    </div>
-                  </div>
-                  <div className="hand-indicator right-hand">
-                    <div className="hand-icon">🤚</div>
-                    <span>Right Hand</span>
-                    <div className={`detection-status ${sessionStats.handsDetected.right ? 'detected' : 'not-detected'}`}>
-                      {sessionStats.handsDetected.right ? 'Detected' : 'Not Detected'}
-                    </div>
-                  </div>
+              {currentSign && (
+                <div className="current-detection" style={{
+                  position: 'absolute',
+                  bottom: '20px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  background: 'rgba(0, 0, 0, 0.8)',
+                  color: 'white',
+                  padding: '8px 16px',
+                  borderRadius: '20px',
+                  fontSize: '14px'
+                }}>
+                  <span className="detected-sign" style={{ fontWeight: 'bold' }}>
+                    {currentSign}
+                  </span>
+                  <span className="detection-confidence" style={{ marginLeft: '10px', opacity: 0.8 }}>
+                    {confidence}%
+                  </span>
                 </div>
-                <div className="fps-counter">
-                  <span>FPS: {cameraInfo.fps}</span>
-                </div>
-                {currentSign && (
-                  <div className="current-detection" style={{
-                    position: 'absolute',
-                    bottom: '20px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    background: 'rgba(0, 0, 0, 0.8)',
-                    color: 'white',
-                    padding: '8px 16px',
-                    borderRadius: '20px',
-                    fontSize: '14px'
-                  }}>
-                    <span className="detected-sign" style={{ fontWeight: 'bold' }}>
-                      {currentSign}
-                    </span>
-                    <span className="detection-confidence" style={{ marginLeft: '10px', opacity: 0.8 }}>
-                      {confidence}%
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="camera-info">
-              <div className="info-item">
-                <div className="info-icon">📹</div>
-                <div className="info-content">
-                  <span className="info-label">Resolution</span>
-                  <span className="info-value">{cameraInfo.resolution}</span>
-                </div>
-              </div>
-              <div className="info-item">
-                <div className="info-icon">🎯</div>
-                <div className="info-content">
-                  <span className="info-label">Detection</span>
-                  <span className="info-value">{getDetectionStatus()}</span>
-                </div>
-              </div>
-              <div className="info-item">
-                <div className="info-icon">⚡</div>
-                <div className="info-content">
-                  <span className="info-label">Confidence</span>
-                  <span className="info-value">{confidence}%</span>
-                </div>
-              </div>
-              <div className="info-item">
-                <div className="info-icon">📊</div>
-                <div className="info-content">
-                  <span className="info-label">Detections</span>
-                  <span className="info-value">{sessionStats.totalDetections}</span>
-                </div>
-              </div>
+              )}
             </div>
 
             <div className="camera-controls">
@@ -253,28 +202,6 @@ const handleSignDetected = (detectedWord) => {
               >
                 <span className="btn-icon">🗑️</span>
                 Clear Translation
-              </button>
-            </div>
-          </div>
-
-          {/* Quick Actions */}
-          <div className="quick-actions-container">
-            <div className="quick-actions-header">
-              <h3>Quick Actions</h3>
-              <div className="quick-actions-icon">⚡</div>
-            </div>
-            <div className="quick-actions-grid">
-              <button className="quick-action-btn" onClick={() => window.location.href = '/learn'}>
-                <div className="qa-icon">📚</div>
-                <span>Learn ASL</span>
-              </button>
-              <button className="quick-action-btn" onClick={() => window.location.href = '/sign-recorder'}>
-                <div className="qa-icon">🎯</div>
-                <span>Record Signs</span>
-              </button>
-              <button className="quick-action-btn" onClick={() => window.location.href = '/model-trainer'}>
-                <div className="qa-icon">📝</div>
-                <span>Train Model</span>
               </button>
             </div>
           </div>
@@ -303,12 +230,6 @@ const handleSignDetected = (detectedWord) => {
               <div className="output-header">
                 <div className="translation-indicator">
                   <div className={`pulse-dot ${translatedText ? 'active' : ''}`}></div>
-                  <span>Live Translation</span>
-                </div>
-                <div className="language-badges">
-                  <span className="language-badge from">ASL</span>
-                  <div className="arrow-icon">→</div>
-                  <span className="language-badge to">English</span>
                 </div>
               </div>
               <div className="output-text">
@@ -317,18 +238,8 @@ const handleSignDetected = (detectedWord) => {
                   'No trained signs found. Please record and train some signs first.'
                 )}
               </div>
-              <div className="translation-actions">
-                <button 
-                  className="action-btn clear-btn"
-                  onClick={clearTranslation}
-                  disabled={!translatedText}
-                >
-                  <span className="btn-icon">🗑️</span>
-                  Clear
-                </button>
-              </div>
             </div>
-
+            
             <div className="translation-history">
               <div className="history-header">
                 <h3>Recent Translations ({detectionHistory.length})</h3>
@@ -377,48 +288,6 @@ const handleSignDetected = (detectedWord) => {
                   </div>
                 )}
               </div>
-            </div>
-          </div>
-
-          {/* Stats Panel */}
-          <div className="stats-container">
-            <div className="stats-header">
-              <h3>Session Statistics</h3>
-              <div className="stats-icon">📊</div>
-            </div>
-            <div className="stats-grid">
-              <div className="stat-item">
-                <div className="stat-number">{sessionStats.totalDetections}</div>
-                <div className="stat-label">Signs Detected</div>
-              </div>
-              <div className="stat-item">
-                <div className="stat-number">{confidence}%</div>
-                <div className="stat-label">Current Accuracy</div>
-              </div>
-              <div className="stat-item">
-                <div className="stat-number">{trainedSignsCount}</div>
-                <div className="stat-label">Trained Signs</div>
-              </div>
-              <div className="stat-item">
-                <div className="stat-number">{cameraInfo.fps || 0}</div>
-                <div className="stat-label">FPS</div>
-              </div>
-            </div>
-            <div className="progress-section">
-              <div className="progress-header">
-                <span>Recognition Progress</span>
-                <span>{cameraInfo.status}</span>
-              </div>
-              <div className="progress-bar">
-                <div 
-                  className="progress-fill" 
-                  style={{ 
-                    width: `${Math.min(100, confidence)}%`,
-                    backgroundColor: confidence > 85 ? '#4caf50' : confidence > 70 ? '#ff9800' : '#f44336'
-                  }}
-                ></div>
-              </div>
-              <div className="progress-text">{confidence}% confidence</div>
             </div>
           </div>
         </div>

@@ -1,0 +1,218 @@
+{
+  "created": "2025-07-22T08:46:18.271Z",
+  "type": "ASL_Signs",
+  "category": "alphabet",
+  "fps": 30,
+  "duration_seconds": 3,
+  "resolution": "640x480",
+  "videos": {
+    "A": {
+      "filename": "A_5.webm",
+      "sign": "A",
+      "category": "alphabet",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T08:46:18.267Z"
+    },
+    "B": {
+      "filename": "B_5.webm",
+      "sign": "B",
+      "category": "alphabet",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T08:46:18.267Z"
+    },
+    "C": {
+      "filename": "C_5.webm",
+      "sign": "C",
+      "category": "alphabet",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T08:46:18.268Z"
+    },
+    "D": {
+      "filename": "D_5.webm",
+      "sign": "D",
+      "category": "alphabet",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T08:46:18.268Z"
+    },
+    "E": {
+      "filename": "E_5.webm",
+      "sign": "E",
+      "category": "alphabet",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T08:46:18.268Z"
+    },
+    "F": {
+      "filename": "F_5.webm",
+      "sign": "F",
+      "category": "alphabet",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T08:46:18.268Z"
+    },
+    "G": {
+      "filename": "G_5.webm",
+      "sign": "G",
+      "category": "alphabet",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T08:46:18.268Z"
+    },
+    "H": {
+      "filename": "H_5.webm",
+      "sign": "H",
+      "category": "alphabet",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T08:46:18.268Z"
+    },
+    "I": {
+      "filename": "I_5.webm",
+      "sign": "I",
+      "category": "alphabet",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T08:46:18.269Z"
+    },
+    "J": {
+      "filename": "J_5.webm",
+      "sign": "J",
+      "category": "alphabet",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T08:46:18.269Z"
+    },
+    "K": {
+      "filename": "K_5.webm",
+      "sign": "K",
+      "category": "alphabet",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T08:46:18.269Z"
+    },
+    "L": {
+      "filename": "L_5.webm",
+      "sign": "L",
+      "category": "alphabet",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T08:46:18.269Z"
+    },
+    "M": {
+      "filename": "M_5.webm",
+      "sign": "M",
+      "category": "alphabet",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T08:46:18.269Z"
+    },
+    "N": {
+      "filename": "N_5.webm",
+      "sign": "N",
+      "category": "alphabet",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T08:46:18.269Z"
+    },
+    "O": {
+      "filename": "O_5.webm",
+      "sign": "O",
+      "category": "alphabet",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T08:46:18.269Z"
+    },
+    "P": {
+      "filename": "P_5.webm",
+      "sign": "P",
+      "category": "alphabet",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T08:46:18.269Z"
+    },
+    "Q": {
+      "filename": "Q_5.webm",
+      "sign": "Q",
+      "category": "alphabet",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T08:46:18.269Z"
+    },
+    "R": {
+      "filename": "R_5.webm",
+      "sign": "R",
+      "category": "alphabet",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T08:46:18.269Z"
+    },
+    "S": {
+      "filename": "S_5.webm",
+      "sign": "S",
+      "category": "alphabet",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T08:46:18.269Z"
+    },
+    "T": {
+      "filename": "T_5.webm",
+      "sign": "T",
+      "category": "alphabet",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T08:46:18.269Z"
+    },
+    "U": {
+      "filename": "U_5.webm",
+      "sign": "U",
+      "category": "alphabet",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T08:46:18.269Z"
+    },
+    "V": {
+      "filename": "V_5.webm",
+      "sign": "V",
+      "category": "alphabet",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T08:46:18.269Z"
+    },
+    "W": {
+      "filename": "W_5.webm",
+      "sign": "W",
+      "category": "alphabet",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T08:46:18.269Z"
+    },
+    "X": {
+      "filename": "X_5.webm",
+      "sign": "X",
+      "category": "alphabet",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T08:46:18.269Z"
+    },
+    "Y": {
+      "filename": "Y_5.webm",
+      "sign": "Y",
+      "category": "alphabet",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T08:46:18.270Z"
+    },
+    "Z": {
+      "filename": "Z_4.webm",
+      "sign": "Z",
+      "category": "alphabet",
+      "frames": null,
+      "duration": null,
+      "recorded_at": "2025-07-22T08:46:18.270Z"
+    }
+  }
+}

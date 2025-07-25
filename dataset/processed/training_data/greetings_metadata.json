@@ -1,0 +1,17 @@
+{
+  "type": "ASL_Greetings_Training",
+  "processed_at": "2025-07-22T10:09:01.674Z",
+  "total_videos": 17,
+  "total_features": 17,
+  "feature_dimensions": 30,
+  "model_accuracy": 0.75,
+  "available_signs": [
+    "Goodbye",
+    "Hello",
+    "Please",
+    "Sorry",
+    "Thank You",
+    "You're Welcome"
+  ],
+  "category": "greetings"
+}

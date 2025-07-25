@@ -14,11 +14,6 @@ function Landing() {
       description: "Advanced machine learning trained on medical ASL vocabulary."
     },
     {
-     icon: "🎤",
-      title: "Speech Recognition",
-      description: "Advanced voice recognition technology that accurately captures phrases and words spoken."
- },
-    {
        icon: '🤟',
       title: 'Sign Language Output',
       description: 'Conversion to sign language with proper grammar structure, and visual representation for deaf patients.'
