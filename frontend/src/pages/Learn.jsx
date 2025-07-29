@@ -10,7 +10,9 @@ function Learn() {
   const [isMusicPlaying, setIsMusicPlaying] = useState(false);
   const [isMusicLoaded, setIsMusicLoaded] = useState(false);
   const [musicError, setMusicError] = useState('');
+  const [playbackSpeed, setPlaybackSpeed] = useState(1); // New state for playback speed
   const audioRef = useRef(null);
+  const videoElement = useRef(null);
 
   // Initialize background music
   useEffect(() => {
@@ -99,6 +101,13 @@ function Learn() {
     };
   }, []);
 
+  // Update video playback speed when it changes
+  useEffect(() => {
+    if (videoElement.current) {
+      videoElement.current.playbackRate = playbackSpeed;
+    }
+  }, [playbackSpeed]);
+
   const toggleMusic = async () => {
     if (!audioRef.current || !isMusicLoaded) {
       console.log('❌ Audio not ready:', { audioRef: !!audioRef.current, loaded: isMusicLoaded });
@@ -121,7 +130,25 @@ function Learn() {
     }
   };
 
- 
+  // Handle playback speed change
+  const handleSpeedChange = (speed) => {
+    setPlaybackSpeed(speed);
+    if (videoElement.current) {
+      videoElement.current.playbackRate = speed;
+    }
+  };
+
+  // Available playback speeds
+  const speedOptions = [
+    { value: 0.25, label: '0.25x', description: 'Very Slow' },
+    { value: 0.5, label: '0.5x', description: 'Slow' },
+    { value: 0.75, label: '0.75x', description: 'Slower' },
+    { value: 1, label: '1x', description: 'Normal' },
+    { value: 1.25, label: '1.25x', description: 'Faster' },
+    { value: 1.5, label: '1.5x', description: 'Fast' },
+    { value: 2, label: '2x', description: 'Very Fast' }
+  ];
+
   const categories = [
     { id: 'alphabet', name: 'Alphabet', icon: '🔤', description: 'Learn the ASL alphabet A-Z' },
     { id: 'numbers', name: 'Numbers', icon: '🔢', description: 'Learn numbers 0-10' },
@@ -389,14 +416,47 @@ const getCurrentSigns = () => {
               </div>
               <div className="modal-body">
                 <video 
+                  ref={videoElement}
                   className="modal-video" 
                   autoPlay 
                   loop 
                   controls
+                  onLoadedMetadata={() => {
+                    if (videoElement.current) {
+                      videoElement.current.playbackRate = playbackSpeed;
+                    }
+                  }}
                 >
                   <source src={showVideoModal.videoUrl} type="video/mp4" />
                   Your browser does not support the video tag.
                 </video>
+                
+                {/* Speed Control Section */}
+                <div className="speed-control-section">
+                  <label className="speed-label">
+                    <span className="speed-icon">⚡</span>
+                    Playback Speed: {speedOptions.find(opt => opt.value === playbackSpeed)?.description}
+                  </label>
+                  <div className="speed-buttons">
+                    {speedOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        className={`speed-btn ${playbackSpeed === option.value ? 'active' : ''}`}
+                        onClick={() => handleSpeedChange(option.value)}
+                        title={option.description}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="speed-description">
+                    <small>
+                      💡 Use slower speeds (0.25x - 0.75x) to study hand movements in detail. 
+                      Use faster speeds (1.25x - 2x) for quick review.
+                    </small>
+                  </div>
+                </div>
+
                 <p className="video-description">{showVideoModal.description}</p>
                 <div className="modal-actions">
                   <button 

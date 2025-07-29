@@ -18,9 +18,13 @@ function Home() {
   });
   const [trainedSignsCount, setTrainedSignsCount] = useState(0);
   const [trainedSigns, setTrainedSigns] = useState([]); // Store the actual trained signs
+  const [isTranslating, setIsTranslating] = useState(true); // New state for translation control
 
   // Handle sign prediction from SimpleHandTracker
   const handlePrediction = (detectedWord, confidence) => {
+    // Only process predictions when translating is active
+    if (!isTranslating) return;
+    
     console.log(`🎯 Home.jsx received prediction: "${detectedWord}" with confidence: ${confidence}%`);
     
     setCurrentSign(detectedWord);
@@ -61,6 +65,8 @@ function Home() {
 
   // Handle confidence updates (called by SimpleHandTracker)
   const handleConfidenceChange = (newConfidence) => {
+    // Only update confidence when translating is active
+    if (!isTranslating) return;
     setConfidence(newConfidence);
   };
 
@@ -134,6 +140,21 @@ function Home() {
     }));
   };
 
+  // Toggle translation on/off
+  const toggleTranslation = () => {
+    if (isTranslating) {
+      // Stop translating
+      setIsTranslating(false);
+      // Clear current detection and translation immediately when stopping
+      setCurrentSign('');
+      setConfidence(0);
+      setTranslatedText('');
+    } else {
+      // Start translating
+      setIsTranslating(true);
+    }
+  };
+
   // Dynamic status text
   const getStatusText = () => {
     if (currentSign) return `Detected: ${currentSign}`;
@@ -171,6 +192,7 @@ function Home() {
                 onPrediction={handlePrediction}
                 mode="recognition"
                 trainedSigns={trainedSigns}
+                isTranslating={isTranslating}
               />
               {currentSign && (
                 <div className="current-detection" style={{
@@ -195,6 +217,13 @@ function Home() {
             </div>
 
             <div className="camera-controls">
+              <button 
+                className={`control-btn ${isTranslating ? 'secondary-btn' : 'primary-btn'}`}
+                onClick={toggleTranslation}
+              >
+                <span className="btn-icon">{isTranslating ? '⏸️' : '▶️'}</span>
+                {isTranslating ? 'Stop Translating' : 'Start Translating'}
+              </button>
               <button 
                 className="control-btn secondary-btn"
                 onClick={clearTranslation}
@@ -233,9 +262,12 @@ function Home() {
                 </div>
               </div>
               <div className="output-text">
-                {translatedText || (trainedSignsCount > 0 ? 
-                  'Position your hands in the camera view and start signing...' : 
-                  'No trained signs found. Please record and train some signs first.'
+                {translatedText || (
+                  !isTranslating ? 
+                    'Translation stopped. Click "Start Translating" to resume.' :
+                    trainedSignsCount > 0 ? 
+                      'Position your hands in the camera view and start signing...' : 
+                      'No trained signs found. Please record and train some signs first.'
                 )}
               </div>
             </div>

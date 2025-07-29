@@ -14,7 +14,9 @@ function ModelTrainer() {
     try {
       const response = await fetch('/api/v1/signs/all');
       const data = await response.json();
-      setSigns(data);
+      // Sort by creation date (most recent first)
+      const sortedData = data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setSigns(sortedData);
     } catch (error) {
       console.error('Error fetching signs:', error);
     }
@@ -107,23 +109,41 @@ function ModelTrainer() {
     return groups;
   }, {});
 
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
+    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
       <h2>Model Training Dashboard</h2>
       
       <div style={{ 
         background: '#f5f5f5', 
         padding: '20px', 
         borderRadius: '10px', 
-        marginBottom: '20px' 
+        marginBottom: '30px' 
       }}>
         <h3>Training Status</h3>
-        <p><strong>Model Status:</strong> {modelStatus}</p>
-        <p><strong>Total Signs:</strong> {Object.keys(signGroups).length}</p>
-        <p><strong>Total Recordings:</strong> {signs.length}</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '20px' }}>
+          <div>
+            <strong>Model Status:</strong> <span style={{ color: modelStatus === 'Trained' ? '#4caf50' : '#ff9800' }}>{modelStatus}</span>
+          </div>
+          <div>
+            <strong>Unique Signs:</strong> {Object.keys(signGroups).length}
+          </div>
+          <div>
+            <strong>Total Recordings:</strong> {signs.length}
+          </div>
+        </div>
         
         {isTraining && (
-          <div style={{ marginTop: '10px' }}>
+          <div style={{ marginBottom: '20px' }}>
             <p>Training Progress: {trainingProgress}%</p>
             <div style={{ 
               width: '100%', 
@@ -146,7 +166,6 @@ function ModelTrainer() {
           onClick={trainModel}
           disabled={isTraining || signs.length < 2}
           style={{
-            marginTop: '10px',
             padding: '12px 24px',
             fontSize: '16px',
             backgroundColor: isTraining ? '#ccc' : '#2196F3',
@@ -160,53 +179,119 @@ function ModelTrainer() {
         </button>
       </div>
 
-      <div style={{ marginBottom: '20px' }}>
-        <h3>Recorded Signs</h3>
-        {Object.keys(signGroups).length === 0 ? (
-          <p>No signs recorded yet. Use the Sign Recorder to start collecting training data.</p>
+      <div>
+        <h3>Recorded Signs Data Table</h3>
+        {signs.length === 0 ? (
+          <div style={{ 
+            textAlign: 'center', 
+            padding: '40px', 
+            background: '#f9f9f9', 
+            borderRadius: '10px',
+            border: '2px dashed #ddd'
+          }}>
+            <p style={{ color: '#666', fontSize: '18px' }}>No signs recorded yet</p>
+            <p style={{ color: '#999' }}>Use the Sign Recorder to start collecting training data</p>
+          </div>
         ) : (
-          Object.entries(signGroups).map(([label, recordings]) => (
-            <div key={label} style={{ 
-              border: '1px solid #ddd', 
-              borderRadius: '8px', 
-              padding: '15px', 
-              marginBottom: '10px',
-              background: 'white'
-            }}>
-              <h4 style={{ margin: '0 0 10px 0', textTransform: 'capitalize' }}>
-                {label} ({recordings.length} recordings)
-              </h4>
-              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                {recordings.map(recording => (
-                  <div key={recording._id} style={{ 
-                    padding: '8px 12px', 
-                    background: '#f0f0f0', 
-                    borderRadius: '5px',
-                    fontSize: '14px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '8px'
-                  }}>
-                    <span>{recording.frameCount} frames</span>
-                    <button
-                      onClick={() => deleteSign(recording._id)}
-                      style={{
-                        background: '#f44336',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '3px',
-                        padding: '2px 6px',
+          <div style={{ 
+            background: 'white', 
+            borderRadius: '10px', 
+            overflow: 'hidden',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+          }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ background: '#f8f9fa', borderBottom: '2px solid #dee2e6' }}>
+                  <th style={{ padding: '15px', textAlign: 'left', fontWeight: '600', color: '#495057' }}>Sign Name</th>
+                  <th style={{ padding: '15px', textAlign: 'center', fontWeight: '600', color: '#495057' }}>Frames</th>
+                  <th style={{ padding: '15px', textAlign: 'center', fontWeight: '600', color: '#495057' }}>Duration</th>
+                  <th style={{ padding: '15px', textAlign: 'left', fontWeight: '600', color: '#495057' }}>Recorded At</th>
+                  <th style={{ padding: '15px', textAlign: 'center', fontWeight: '600', color: '#495057' }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {signs.map((sign, index) => (
+                  <tr 
+                    key={sign._id} 
+                    style={{ 
+                      borderBottom: '1px solid #dee2e6',
+                      backgroundColor: index % 2 === 0 ? '#fff' : '#f8f9fa',
+                      transition: 'background-color 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => e.target.parentElement.style.backgroundColor = '#e3f2fd'}
+                    onMouseLeave={(e) => e.target.parentElement.style.backgroundColor = index % 2 === 0 ? '#fff' : '#f8f9fa'}
+                  >
+                    <td style={{ padding: '15px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <span style={{ 
+                          background: '#e3f2fd',
+                          color: '#1976d2',
+                          padding: '4px 8px',
+                          borderRadius: '12px',
+                          fontSize: '12px',
+                          fontWeight: '500'
+                        }}>
+                          {(sign.word || sign.label).toUpperCase()}
+                        </span>
+                        {index === 0 && (
+                          <span style={{ 
+                            background: '#4caf50',
+                            color: 'white',
+                            padding: '2px 6px',
+                            borderRadius: '8px',
+                            fontSize: '10px',
+                            fontWeight: 'bold'
+                          }}>
+                            LATEST
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                    <td style={{ padding: '15px', textAlign: 'center' }}>
+                      <span style={{ 
+                        background: '#fff3e0',
+                        color: '#f57c00',
+                        padding: '4px 8px',
+                        borderRadius: '8px',
                         fontSize: '12px',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      ×
-                    </button>
-                  </div>
+                        fontWeight: '500'
+                      }}>
+                        {sign.frameCount || sign.frames?.length || 0}
+                      </span>
+                    </td>
+                    <td style={{ padding: '15px', textAlign: 'center' }}>
+                      <span style={{ color: '#666', fontSize: '14px' }}>
+                        {sign.duration ? `${(sign.duration / 1000).toFixed(1)}s` : 'N/A'}
+                      </span>
+                    </td>
+                    <td style={{ padding: '15px', color: '#666', fontSize: '14px' }}>
+                      {sign.createdAt ? formatDate(sign.createdAt) : 'Unknown'}
+                    </td>
+                    <td style={{ padding: '15px', textAlign: 'center' }}>
+                      <button
+                        onClick={() => deleteSign(sign._id)}
+                        style={{
+                          background: '#ff5722',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '6px',
+                          padding: '6px 12px',
+                          fontSize: '12px',
+                          fontWeight: '500',
+                          cursor: 'pointer',
+                          transition: 'background-color 0.2s ease'
+                        }}
+                        onMouseEnter={(e) => e.target.style.backgroundColor = '#d32f2f'}
+                        onMouseLeave={(e) => e.target.style.backgroundColor = '#ff5722'}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
                 ))}
-              </div>
-            </div>
-          ))
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>

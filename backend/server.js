@@ -17,7 +17,7 @@ import translateRoutes from './routes/translate.js';
 import userRoutes from './routes/users.js';
 import wlaslRouter from './routes/video.js';
 import statsRoute from './routes/stats.js';
-// import predictRoutes from './routes/predict.js';
+import predictRoutes from './routes/predict.js';
 import quickTrainRoutes from './routes/quickTrain.js';
 
 
@@ -36,6 +36,7 @@ app.use('/api/v1/translate', translateRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/asl', wlaslRouter);
 app.use('/api/v1/stats', statsRoute);
+app.use('/api/v1/predict', predictRoutes);
 app.use('/api', signRoutes); // Mount signs routes at /api for predict endpoint
 app.use('/api/quickTrain', quickTrainRoutes); // Mount quickTrain routes
 

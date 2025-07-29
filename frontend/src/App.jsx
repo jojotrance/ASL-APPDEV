@@ -19,8 +19,6 @@ import ASLDetectorPage from './pages/ASLDetectorPage.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Users from './pages/Users.jsx';
 import PendingApproval from './pages/PendingApproval.jsx';
-import SimpleTrainerPage from './pages/SimpleTrainerPage.jsx';
-import ModelTesterPage from './components/ModelTesterPage.jsx';
 import './App.css';
 
 function App() {
@@ -78,16 +76,6 @@ function App() {
           <Route path="/model-trainer" element={
             <ProtectedRoute>
               <ModelTrainer />
-            </ProtectedRoute>
-          } />
-          <Route path="/simple-trainer" element={
-            <ProtectedRoute>
-              <SimpleTrainerPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/model-tester" element={
-            <ProtectedRoute>
-              <ModelTesterPage />
             </ProtectedRoute>
           } />
           
