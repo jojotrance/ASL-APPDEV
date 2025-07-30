@@ -289,244 +289,439 @@ function SignRecorder() {
     setFrameCount(0);
   };
 
+  const containerStyle = {
+    minHeight: '100vh',
+    background: 'linear-gradient(135deg, #dbeafe 0%, #bfdbfe 50%, #93c5fd 100%)',
+    padding: '2rem 1rem',
+    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif"
+  };
+
+  const contentStyle = {
+    maxWidth: '900px',
+    margin: '0 auto',
+    background: 'rgba(255, 255, 255, 0.95)',
+    backdropFilter: 'blur(20px)',
+    borderRadius: '24px',
+    padding: '2.5rem',
+    border: '1px solid rgba(255, 255, 255, 0.3)',
+    boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)'
+  };
+
+  const titleStyle = {
+    fontSize: '2.5rem',
+    fontWeight: '800',
+    textAlign: 'center',
+    marginBottom: '2rem',
+    background: 'linear-gradient(45deg, #1e40af, #3730a3)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    backgroundClip: 'text'
+  };
+
+  const inputStyle = {
+    maxWidth: '850px',
+    width: '100%',
+    padding: '1rem 1.5rem',
+    fontSize: '1rem',
+    border: '2px solid rgba(30, 64, 175, 0.2)',
+    borderRadius: '16px',
+    marginBottom: '1rem',
+    background: 'rgba(255, 255, 255, 0.8)',
+    backdropFilter: 'blur(10px)',
+    transition: 'all 0.3s ease',
+    fontFamily: 'inherit',
+    outline: 'none'
+  };
+
+  const buttonStyle = {
+    padding: '1rem 2rem',
+    fontSize: '1rem',
+    fontWeight: '600',
+    border: 'none',
+    borderRadius: '12px',
+    cursor: 'pointer',
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    minWidth: '140px',
+    fontFamily: 'inherit',
+    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+  };
+
+  const primaryButtonStyle = {
+    ...buttonStyle,
+    background: 'linear-gradient(45deg, #ef4444, #dc2626)',
+    color: 'white'
+  };
+
+  const successButtonStyle = {
+    ...buttonStyle,
+    background: 'linear-gradient(45deg, #10b981, #059669)',
+    color: 'white'
+  };
+
+  const warningButtonStyle = {
+    ...buttonStyle,
+    background: 'linear-gradient(45deg, #f59e0b, #d97706)',
+    color: 'white'
+  };
+
+  const disabledButtonStyle = {
+    ...buttonStyle,
+    background: '#e5e7eb',
+    color: '#9ca3af',
+    cursor: 'not-allowed',
+    boxShadow: 'none'
+  };
+
   if (error) {
     return (
-      <div style={{ 
-        padding: '40px', 
-        textAlign: 'center', 
-        color: '#f44336',
-        background: '#ffebee',
-        borderRadius: '10px',
-        border: '1px solid #ffcdd2'
-      }}>
-        <div style={{ fontSize: '48px', marginBottom: '16px' }}>📷</div>
-        <h3>Camera Access Error</h3>
-        <p>{error}</p>
+      <div style={containerStyle}>
+        <div style={{
+          ...contentStyle,
+          textAlign: 'center',
+          background: 'rgba(239, 68, 68, 0.1)',
+          border: '2px solid rgba(239, 68, 68, 0.2)'
+        }}>
+          <div style={{ fontSize: '4rem', marginBottom: '1.5rem' }}>📷</div>
+          <h3 style={{ 
+            color: '#dc2626', 
+            fontSize: '1.5rem', 
+            fontWeight: '700',
+            marginBottom: '1rem'
+          }}>
+            Camera Access Error
+          </h3>
+          <p style={{ color: '#7f1d1d', fontSize: '1.1rem' }}>{error}</p>
+          <div style={{
+            marginTop: '2rem',
+            padding: '1rem',
+            background: 'rgba(252, 165, 165, 0.2)',
+            borderRadius: '12px',
+            fontSize: '0.9rem',
+            color: '#991b1b'
+          }}>
+            💡 Please ensure camera permissions are enabled and try refreshing the page
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
-      <h2>Sign Language Recorder</h2>
-      
-      <div style={{ marginBottom: '20px' }}>
-        <input
-          type="text"
-          placeholder="Enter sign label (e.g., 'hello', 'thank you')"
-          value={signLabel}
-          onChange={(e) => setSignLabel(e.target.value)}
-          style={{
-            width: '100%',
-            padding: '12px',
-            fontSize: '16px',
-            border: '2px solid #ddd',
-            borderRadius: '8px',
-            marginBottom: '10px'
-          }}
-        />
-        <div style={{ fontSize: '14px', color: '#666', textAlign: 'center' }}>
-          Recording will capture {RECORDING_DURATION/1000} seconds with both hands tracking and optimized data
+    <div style={containerStyle}>
+      <style>
+        {`
+          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+          @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+          }
+          @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+          }
+        `}
+      </style>
+
+      <div style={contentStyle}>
+        <h2 style={titleStyle}>📹 Sign Language Recorder</h2>
+        
+        <div style={{ marginBottom: '1rem' }}>
+          <input
+            type="text"
+            placeholder="Enter sign label (e.g., 'hello', 'thank you')"
+            value={signLabel}
+            onChange={(e) => setSignLabel(e.target.value)}
+            style={inputStyle}
+            onFocus={(e) => {
+              e.target.style.borderColor = '#1e40af';
+              e.target.style.boxShadow = '0 0 0 3px rgba(30, 64, 175, 0.1)';
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = 'rgba(30, 64, 175, 0.2)';
+              e.target.style.boxShadow = 'none';
+            }}
+          />
+          <div style={{ 
+            fontSize: '0.9rem', 
+            color: '#6b7280', 
+            textAlign: 'center',
+            background: 'rgba(30, 64, 175, 0.05)',
+     
+            borderRadius: '12px',
+            border: '1px solid rgba(30, 64, 175, 0.1)'
+          }}>
+            ⏱️ Recording will capture {RECORDING_DURATION/1000} seconds with both hands tracking and optimized data
+          </div>
         </div>
-      </div>
 
-      <div style={{ position: 'relative', width: '100%', borderRadius: '15px', overflow: 'hidden', marginBottom: '20px' }}>
-        {isLoading && (
-          <div style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0, 0, 0, 0.8)',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: 'white',
-            zIndex: 10,
-            minHeight: '400px'
-          }}>
-            <div style={{ 
-              width: '40px', 
-              height: '40px', 
-              border: '4px solid #ffffff30',
-              borderTop: '4px solid #2196F3',
-              borderRadius: '50%',
-              animation: 'spin 1s linear infinite',
-              marginBottom: '16px'
-            }}></div>
-            <p>Initializing camera...</p>
-          </div>
-        )}
-
-        {isRecording && (
-          <div style={{
-            position: 'absolute',
-            top: '20px',
-            left: '20px',
-            background: '#f44336',
-            color: 'white',
-            padding: '8px 16px',
-            borderRadius: '20px',
-            zIndex: 5,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px'
-          }}>
+        <div style={{ 
+          position: 'relative', 
+          width: '100%', 
+          borderRadius: '20px', 
+          overflow: 'hidden', 
+          marginBottom: '2rem',
+          boxShadow: '0 12px 32px rgba(0, 0, 0, 0.15)'
+        }}>
+          {isLoading && (
             <div style={{
-              width: '8px',
-              height: '8px',
-              background: 'white',
-              borderRadius: '50%',
-              animation: 'blink 1s infinite'
-            }}></div>
-            RECORDING - Frame {frameCount}
-          </div>
-        )}
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              background: 'rgba(30, 64, 175, 0.9)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              zIndex: 10,
+              minHeight: '400px'
+            }}>
+              <div style={{ 
+                width: '50px', 
+                height: '50px', 
+                border: '4px solid rgba(255, 255, 255, 0.3)',
+                borderTop: '4px solid #ffffff',
+                borderRadius: '50%',
+                animation: 'spin 1s linear infinite',
+                marginBottom: '1.5rem'
+              }}></div>
+              <p style={{ fontSize: '1.1rem', fontWeight: '600' }}>🎥 Initializing camera...</p>
+              <p style={{ fontSize: '0.9rem', opacity: '0.8', marginTop: '0.5rem' }}>
+                Setting up MediaPipe hand tracking
+              </p>
+            </div>
+          )}
 
-        {/* Hand detection indicator */}
-        {!isLoading && (
-          <div style={{
-            position: 'absolute',
-            top: '20px',
-            right: '20px',
-            background: 'rgba(0, 0, 0, 0.8)',
-            color: 'white',
-            padding: '8px 16px',
-            borderRadius: '8px',
-            zIndex: 5,
-            fontSize: '14px'
-          }}>
-            <div style={{ marginBottom: '4px', fontWeight: 'bold' }}>Hands Detected:</div>
-            {detectedHands.length === 0 ? (
-              <div style={{ color: '#ffcccc' }}>No hands detected</div>
-            ) : (
-              detectedHands.map((hand, index) => (
-                <div key={index} style={{ 
-                  color: hand === 'Left' ? '#64b5f6' : '#81c784',
+          {isRecording && (
+            <div style={{
+              position: 'absolute',
+              top: '20px',
+              left: '20px',
+              background: 'linear-gradient(45deg, #ef4444, #dc2626)',
+              color: 'white',
+              padding: '12px 20px',
+              borderRadius: '25px',
+              zIndex: 5,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              boxShadow: '0 8px 25px rgba(239, 68, 68, 0.4)',
+              animation: 'pulse 2s infinite'
+            }}>
+              <div style={{
+                width: '10px',
+                height: '10px',
+                background: 'white',
+                borderRadius: '50%',
+                animation: 'blink 1s infinite'
+              }}></div>
+              <span style={{ fontWeight: '600' }}>RECORDING</span>
+              <span style={{ 
+                background: 'rgba(255, 255, 255, 0.2)',
+                padding: '4px 8px',
+                borderRadius: '12px',
+                fontSize: '0.85rem'
+              }}>
+                Frame {frameCount}
+              </span>
+            </div>
+          )}
+
+          {/* Hand detection indicator */}
+          {!isLoading && (
+            <div style={{
+              position: 'absolute',
+              top: '20px',
+              right: '20px',
+              background: 'rgba(0, 0, 0, 0.8)',
+              backdropFilter: 'blur(10px)',
+              color: 'white',
+              padding: '12px 16px',
+              borderRadius: '16px',
+              zIndex: 5,
+              fontSize: '0.9rem',
+              minWidth: '140px'
+            }}>
+              <div style={{ marginBottom: '8px', fontWeight: '700', fontSize: '0.8rem', opacity: '0.8' }}>
+                🤚 HANDS DETECTED
+              </div>
+              {detectedHands.length === 0 ? (
+                <div style={{ 
+                  color: '#fca5a5',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '4px'
+                  gap: '6px',
+                  fontSize: '0.85rem'
                 }}>
                   <div style={{
                     width: '8px',
                     height: '8px',
                     borderRadius: '50%',
-                    background: hand === 'Left' ? '#2196F3' : '#4caf50'
+                    background: '#ef4444'
                   }}></div>
-                  {hand} Hand
+                  No hands detected
                 </div>
-              ))
-            )}
+              ) : (
+                detectedHands.map((hand, index) => (
+                  <div key={index} style={{ 
+                    color: hand === 'Left' ? '#93c5fd' : '#86efac',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    marginBottom: index < detectedHands.length - 1 ? '4px' : '0',
+                    fontSize: '0.85rem',
+                    fontWeight: '600'
+                  }}>
+                    <div style={{
+                      width: '10px',
+                      height: '10px',
+                      borderRadius: '50%',
+                      background: hand === 'Left' ? '#3b82f6' : '#10b981'
+                    }}></div>
+                    {hand} Hand
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+          
+          <video 
+            ref={videoRef} 
+            style={{ 
+              width: '100%', 
+              display: isLoading ? 'none' : 'block',
+              transform: 'scaleX(-1)',
+              borderRadius: '20px'
+            }} 
+            playsInline 
+            muted 
+          />
+          
+          <canvas 
+            ref={canvasRef} 
+            style={{ 
+              position: 'absolute', 
+              top: 0, 
+              left: 0,
+              width: '100%',
+              height: '100%',
+              transform: 'scaleX(-1)',
+              borderRadius: '20px'
+            }} 
+          />
+        </div>
+
+        <div style={{ 
+          display: 'flex', 
+          gap: '1rem', 
+          justifyContent: 'center', 
+          flexWrap: 'wrap',
+          marginBottom: '2rem'
+        }}>
+          <button
+            onClick={startRecording}
+            disabled={isRecording || !signLabel.trim() || isLoading}
+            style={isRecording || !signLabel.trim() || isLoading ? disabledButtonStyle : primaryButtonStyle}
+            onMouseEnter={(e) => {
+              if (!e.target.disabled) {
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 8px 25px rgba(239, 68, 68, 0.3)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!e.target.disabled) {
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
+              }
+            }}
+          >
+            {isRecording ? '🔴 Recording...' : '🎬 Start Recording'}
+          </button>
+
+          <button
+            onClick={saveRecording}
+            disabled={recordedFrames.length === 0}
+            style={recordedFrames.length === 0 ? disabledButtonStyle : successButtonStyle}
+            onMouseEnter={(e) => {
+              if (!e.target.disabled) {
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 8px 25px rgba(16, 185, 129, 0.3)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!e.target.disabled) {
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
+              }
+            }}
+          >
+            💾 Save Sign
+          </button>
+
+          <button
+            onClick={clearRecording}
+            disabled={recordedFrames.length === 0}
+            style={recordedFrames.length === 0 ? disabledButtonStyle : warningButtonStyle}
+            onMouseEnter={(e) => {
+              if (!e.target.disabled) {
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 8px 25px rgba(245, 158, 11, 0.3)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!e.target.disabled) {
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
+              }
+            }}
+          >
+            🗑️ Clear
+          </button>
+        </div>
+
+        {recordedFrames.length > 0 && (
+          <div style={{ 
+            padding: '1.5rem', 
+            background: 'linear-gradient(45deg, #d1fae5, #a7f3d0)',
+            borderRadius: '16px',
+            textAlign: 'center',
+            border: '2px solid rgba(16, 185, 129, 0.3)',
+            boxShadow: '0 8px 25px rgba(16, 185, 129, 0.1)'
+          }}>
+            <div style={{ fontSize: '1.1rem', fontWeight: '600', color: '#065f46', marginBottom: '0.5rem' }}>
+              ✅ Recording Complete!
+            </div>
+            <p style={{ color: '#047857', margin: '0 0 0.5rem 0' }}>
+              Captured <strong>{recordedFrames.length} optimized frames</strong> for sign: <strong>"{signLabel}"</strong>
+            </p>
+            <p style={{ 
+              fontSize: '0.9rem', 
+              color: '#059669',
+              margin: '0',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px'
+            }}>
+              📊 Data size: <strong>{Math.round(JSON.stringify(recordedFrames).length / 1024)} KB</strong>
+              <span style={{
+                background: 'rgba(16, 185, 129, 0.2)',
+                padding: '2px 8px',
+                borderRadius: '8px',
+                fontSize: '0.8rem'
+              }}>
+                Optimized for transmission
+              </span>
+            </p>
           </div>
         )}
-        
-        <video 
-          ref={videoRef} 
-          style={{ 
-            width: '100%', 
-            display: isLoading ? 'none' : 'block',
-            transform: 'scaleX(-1)'
-          }} 
-          playsInline 
-          muted 
-        />
-        
-        <canvas 
-          ref={canvasRef} 
-          style={{ 
-            position: 'absolute', 
-            top: 0, 
-            left: 0,
-            width: '100%',
-            height: '100%',
-            transform: 'scaleX(-1)'
-          }} 
-        />
       </div>
-
-      <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
-        <button
-          onClick={startRecording}
-          disabled={isRecording || !signLabel.trim() || isLoading}
-          style={{
-            padding: '12px 24px',
-            fontSize: '16px',
-            backgroundColor: isRecording ? '#ccc' : '#f44336',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: isRecording ? 'not-allowed' : 'pointer',
-            minWidth: '120px'
-          }}
-        >
-          {isRecording ? 'Recording...' : 'Start Recording'}
-        </button>
-
-        <button
-          onClick={saveRecording}
-          disabled={recordedFrames.length === 0}
-          style={{
-            padding: '12px 24px',
-            fontSize: '16px',
-            backgroundColor: recordedFrames.length === 0 ? '#ccc' : '#4caf50',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: recordedFrames.length === 0 ? 'not-allowed' : 'pointer',
-            minWidth: '120px'
-          }}
-        >
-          Save Sign
-        </button>
-
-        <button
-          onClick={clearRecording}
-          disabled={recordedFrames.length === 0}
-          style={{
-            padding: '12px 24px',
-            fontSize: '16px',
-            backgroundColor: recordedFrames.length === 0 ? '#ccc' : '#ff9800',
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: recordedFrames.length === 0 ? 'not-allowed' : 'pointer',
-            minWidth: '120px'
-          }}
-        >
-          Clear
-        </button>
-      </div>
-
-      {recordedFrames.length > 0 && (
-        <div style={{ 
-          marginTop: '20px', 
-          padding: '16px', 
-          background: '#e8f5e8', 
-          borderRadius: '8px',
-          textAlign: 'center',
-          border: '1px solid #4caf50'
-        }}>
-          <p>✅ Recorded {recordedFrames.length} optimized frames for sign: <strong>{signLabel}</strong></p>
-          <p style={{ fontSize: '14px', color: '#666' }}>
-            Data size optimized for safe transmission ({Math.round(JSON.stringify(recordedFrames).length / 1024)} KB)
-          </p>
-        </div>
-      )}
-
-      <style>
-        {`
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-        @keyframes blink {
-          0%, 50% { opacity: 1; }
-          51%, 100% { opacity: 0; }
-        }
-        `}
-      </style>
     </div>
   );
 }
