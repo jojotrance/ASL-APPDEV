@@ -307,40 +307,10 @@ function SignRecorder() {
   }
 
   return (
-    <div style={{ 
-        minHeight: '100vh',
-        width: '100%',
-        padding: '40px 20px',
-        background: 'linear-gradient(135deg, #EBF4FF 0%, #E6FFFA 100%)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}>
-      <div style={{
-        width: '100%',
-        maxWidth: '800px',
-        padding: '30px',
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        backdropFilter: 'blur(10px)',
-        borderRadius: '24px',
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
-      }}>
-        <h2 style={{
-        color: '#2563EB',
-        fontSize: '2rem',
-        textAlign: 'center',
-        marginBottom: '1.5rem',
-        fontWeight: '600'
-      }}>Sign Language Recorder</h2>
+    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px' }}>
+      <h2>Sign Language Recorder</h2>
       
-      <div style={{ 
-        marginBottom: '25px',
-        background: 'white',
-        padding: '20px',
-        borderRadius: '15px',
-        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.05)'
-      }}>
+      <div style={{ marginBottom: '20px' }}>
         <input
           type="text"
           placeholder="Enter sign label (e.g., 'hello', 'thank you')"
@@ -348,17 +318,11 @@ function SignRecorder() {
           onChange={(e) => setSignLabel(e.target.value)}
           style={{
             width: '100%',
-            padding: '15px',
+            padding: '12px',
             fontSize: '16px',
-            border: '2px solid #E2E8F0',
-            borderRadius: '12px',
-            marginBottom: '12px',
-            transition: 'all 0.3s ease',
-            outline: 'none',
-            ':focus': {
-              borderColor: '#2563EB',
-              boxShadow: '0 0 0 3px rgba(37, 99, 235, 0.1)'
-            }
+            border: '2px solid #ddd',
+            borderRadius: '8px',
+            marginBottom: '10px'
           }}
         />
         <div style={{ fontSize: '14px', color: '#666', textAlign: 'center' }}>
@@ -366,15 +330,7 @@ function SignRecorder() {
         </div>
       </div>
 
-      <div style={{ 
-        position: 'relative', 
-        width: '100%', 
-        borderRadius: '20px', 
-        overflow: 'hidden', 
-        marginBottom: '25px',
-        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
-        background: '#FFFFFF'
-      }}>
+      <div style={{ position: 'relative', width: '100%', borderRadius: '15px', overflow: 'hidden', marginBottom: '20px' }}>
         {isLoading && (
           <div style={{
             position: 'absolute',
@@ -495,75 +451,48 @@ function SignRecorder() {
           onClick={startRecording}
           disabled={isRecording || !signLabel.trim() || isLoading}
           style={{
-            padding: '14px 28px',
+            padding: '12px 24px',
             fontSize: '16px',
-            backgroundColor: isRecording ? '#E2E8F0' : '#3B82F6',
-            color: isRecording ? '#94A3B8' : 'white',
+            backgroundColor: isRecording ? '#ccc' : '#f44336',
+            color: 'white',
             border: 'none',
-            borderRadius: '12px',
+            borderRadius: '8px',
             cursor: isRecording ? 'not-allowed' : 'pointer',
-            minWidth: '140px',
-            fontWeight: '600',
-            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-            transform: 'scale(1)',
-            boxShadow: isRecording ? 'none' : '0 4px 12px rgba(59, 130, 246, 0.3)',
-            '&:hover': {
-              backgroundColor: isRecording ? '#E2E8F0' : '#60A5FA',
-              transform: isRecording ? 'none' : 'scale(1.05)',
-              boxShadow: isRecording ? 'none' : '0 8px 20px rgba(59, 130, 246, 0.4)'
-            }
+            minWidth: '120px'
           }}
         >
-          {isRecording ? '📹 Recording...' : '📹 Start Recording'}
+          {isRecording ? 'Recording...' : 'Start Recording'}
         </button>
 
         <button
           onClick={saveRecording}
           disabled={recordedFrames.length === 0}
           style={{
-            padding: '14px 28px',
+            padding: '12px 24px',
             fontSize: '16px',
-            backgroundColor: recordedFrames.length === 0 ? '#E2E8F0' : '#3B82F6',
-            color: recordedFrames.length === 0 ? '#94A3B8' : 'white',
+            backgroundColor: recordedFrames.length === 0 ? '#ccc' : '#4caf50',
+            color: 'white',
             border: 'none',
-            borderRadius: '12px',
+            borderRadius: '8px',
             cursor: recordedFrames.length === 0 ? 'not-allowed' : 'pointer',
-            minWidth: '140px',
-            fontWeight: '600',
-            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-            transform: 'scale(1)',
-            boxShadow: recordedFrames.length === 0 ? 'none' : '0 4px 12px rgba(59, 130, 246, 0.3)',
-            '&:hover': {
-              backgroundColor: recordedFrames.length === 0 ? '#E2E8F0' : '#60A5FA',
-              transform: recordedFrames.length === 0 ? 'none' : 'scale(1.05)',
-              boxShadow: recordedFrames.length === 0 ? 'none' : '0 8px 20px rgba(59, 130, 246, 0.4)'
-            }
+            minWidth: '120px'
           }}
         >
-          💾 Save Sign
+          Save Sign
         </button>
 
         <button
           onClick={clearRecording}
           disabled={recordedFrames.length === 0}
           style={{
-            padding: '14px 28px',
+            padding: '12px 24px',
             fontSize: '16px',
-            backgroundColor: recordedFrames.length === 0 ? '#E2E8F0' : '#3B82F6',
-            color: recordedFrames.length === 0 ? '#94A3B8' : 'white',
+            backgroundColor: recordedFrames.length === 0 ? '#ccc' : '#ff9800',
+            color: 'white',
             border: 'none',
-            borderRadius: '12px',
+            borderRadius: '8px',
             cursor: recordedFrames.length === 0 ? 'not-allowed' : 'pointer',
-            minWidth: '140px',
-            fontWeight: '600',
-            transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-            transform: 'scale(1)',
-            boxShadow: recordedFrames.length === 0 ? 'none' : '0 4px 12px rgba(59, 130, 246, 0.3)',
-            '&:hover': {
-              backgroundColor: recordedFrames.length === 0 ? '#E2E8F0' : '#60A5FA',
-              transform: recordedFrames.length === 0 ? 'none' : 'scale(1.05)',
-              boxShadow: recordedFrames.length === 0 ? 'none' : '0 8px 20px rgba(59, 130, 246, 0.4)'
-            }
+            minWidth: '120px'
           }}
         >
           Clear
@@ -572,13 +501,12 @@ function SignRecorder() {
 
       {recordedFrames.length > 0 && (
         <div style={{ 
-          marginTop: '25px', 
-          padding: '20px', 
-          background: 'linear-gradient(to right, #E0F2FE, #E0F7FF)',
-          borderRadius: '15px',
+          marginTop: '20px', 
+          padding: '16px', 
+          background: '#e8f5e8', 
+          borderRadius: '8px',
           textAlign: 'center',
-          border: '1px solid #BAE6FD',
-          boxShadow: '0 4px 12px rgba(186, 230, 253, 0.2)'
+          border: '1px solid #4caf50'
         }}>
           <p>✅ Recorded {recordedFrames.length} optimized frames for sign: <strong>{signLabel}</strong></p>
           <p style={{ fontSize: '14px', color: '#666' }}>
@@ -599,7 +527,6 @@ function SignRecorder() {
         }
         `}
       </style>
-      </div>
     </div>
   );
 }

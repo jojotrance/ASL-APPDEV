@@ -17,38 +17,6 @@ import {
 } from 'recharts';
 import '../dashboard.css';
 
-const buttonBaseStyle = {
-  padding: '0.75rem 1.5rem',
-  borderRadius: '8px',
-  cursor: 'pointer',
-  transition: 'all 0.3s ease',
-  border: '1px solid',
-  fontWeight: '500',
-  width: '100%',
-  marginBottom: '10px',
-};
-
-const recorderStyle = {
-  ...buttonBaseStyle,
-  backgroundColor: '#E3F2FD',
-  color: '#1976D2',
-  borderColor: '#90CAF9',
-};
-
-const trainerStyle = {
-  ...buttonBaseStyle,
-  backgroundColor: '#E8F4FF',
-  color: '#0288D1',
-  borderColor: '#81D4FA',
-};
-
-const usersStyle = {
-  ...buttonBaseStyle,
-  backgroundColor: '#E0F7FA',
-  color: '#0097A7',
-  borderColor: '#80DEEA',
-};
-
 const Dashboard = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -85,16 +53,7 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="dashboard-container" style={{
-        minHeight: '100vh',
-        width: '100%',
-        padding: '40px 20px',
-        background: 'linear-gradient(135deg, #EBF4FF 0%, #E6FFFA 100%)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}>
+      <div className="dashboard-container">
         <div className="loading">Loading dashboard...</div>
       </div>
     );
@@ -102,16 +61,7 @@ const Dashboard = () => {
 
   if (error) {
     return (
-      <div className="dashboard-container" style={{
-        minHeight: '100vh',
-        width: '100%',
-        padding: '40px 20px',
-        background: 'linear-gradient(135deg, #EBF4FF 0%, #E6FFFA 100%)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}>
+      <div className="dashboard-container">
         <div className="error">Error: {error}</div>
       </div>
     );
@@ -124,70 +74,28 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="page-container" style={{
-      minHeight: '100vh',
-      width: '100%',
-      padding: '40px 20px',
-      background: 'linear-gradient(135deg, #EBF4FF 0%, #E6FFFA 100%)',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center'
-    }}>
-      <div className="content-wrapper" style={{
-        width: '100%',
-        maxWidth: '1200px',
-        padding: '30px',
-        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-        backdropFilter: 'blur(10px)',
-        borderRadius: '24px',
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
-      }}>
-        <div className="dashboard-header">
-          <h1>📊 Admin Dashboard</h1>
-          <p>ASL Learning Application Analytics & Management</p>
-        </div>
+    <div className="dashboard-container">
+      <div className="dashboard-header">
+        <h1>📊 Admin Dashboard</h1>
+        <p>ASL Learning Application Analytics & Management</p>
         
         {/* Admin Navigation Buttons */}
         <div className="admin-nav-buttons">
           <button 
             onClick={() => navigate('/sign-recorder')}
-            style={{
-              ...recorderStyle,
-              '&:hover': {
-                backgroundColor: '#F0F7FF',
-                color: '#2196F3',
-                borderColor: '#BBDEFB',
-                boxShadow: '0 2px 8px rgba(33, 150, 243, 0.15)'
-              }
-            }}
+            className="nav-button recorder-btn"
           >
             📹 Sign Recorder
           </button>
           <button 
             onClick={() => navigate('/model-trainer')}
-            style={{
-              ...trainerStyle,
-              '&:hover': {
-                backgroundColor: '#F0FFEB',
-                color: '#4CAF50',
-                borderColor: '#C8E6C9',
-                boxShadow: '0 2px 8px rgba(76, 175, 80, 0.15)'
-              }
-            }}
+            className="nav-button trainer-btn"
           >
             🤖 Model Trainer
           </button>
           <button 
             onClick={() => navigate('/users')}
-            style={{
-              ...usersStyle,
-              '&:hover': {
-                backgroundColor: '#E8F7FF',
-                color: '#039BE5',
-                borderColor: '#B3E5FC',
-                boxShadow: '0 2px 8px rgba(3, 155, 229, 0.15)'
-              }
-            }}
+            className="nav-button users-btn"
           >
             👥 Manage Users
           </button>
@@ -239,13 +147,13 @@ const Dashboard = () => {
           </div>
           <div className="stat-trend positive">↗ +{Math.round(stats.totalUsers * 0.15)}</div>
         </div>
-      
+      </div>
 
-        {/* Charts Section */}
-        <div className="charts-container">
-          <div className="chart-section">
-            <div className="chart-card">
-              <h3>📊 Usage Overview</h3>
+      {/* Charts Section */}
+      <div className="charts-container">
+        <div className="chart-section">
+          <div className="chart-card">
+            <h3>📊 Usage Overview</h3>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={[
                 { name: 'Users', value: stats.totalUsers },
@@ -386,8 +294,6 @@ const Dashboard = () => {
                 <div className="activity-content">
                   <span className="activity-label">Total ASL signs</span>
                   <span className="activity-value">{stats.totalSigns}</span>
-                </div>
-              </div>
                 </div>
               </div>
             </div>
